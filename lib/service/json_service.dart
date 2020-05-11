@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:clean_framework/locator.dart';
 import 'package:flutter/foundation.dart';
@@ -79,7 +80,9 @@ abstract class JsonService<
     }
 
     try {
-      return parseJson(response.content);
+      final Map<String, dynamic> jsonResponse =
+          json.decode(response.content) ?? <String, dynamic>{};
+      return parseJson(jsonResponse);
     } on Error catch (e) {
       Locator()
           .logger

@@ -1,0 +1,71 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html>
+<head>
+<title>Log4J Log Messages</title>
+<style type="text/css">
+<!--
+body, table {font-family: arial,sans-serif; font-size: x-small;}
+th {background: #336699; color: #FFFFFF; text-align: left;}
+-->
+</style>
+</head>
+<body bgcolor="#FFFFFF" topmargin="6" leftmargin="6">
+<hr size="1" noshade>
+Log session start time Mon May 11 18:35:40 EDT 2020<br>
+<br>
+<table cellspacing="0" cellpadding="4" border="1" bordercolor="#224466" width="100%">
+<tr>
+<th>Time</th>
+<th>Thread</th>
+<th>Level</th>
+<th>Category</th>
+<th>Message</th>
+</tr>
+
+<tr>
+<td>30</td>
+<td title="main thread">main</td>
+<td title="Level">INFO</td>
+<td title="org.eclipse.jetty.util.log category">org.eclipse.jetty.util.log</td>
+<td title="Message">Logging to org.slf4j.impl.Log4jLoggerAdapter(org.eclipse.jetty.util.log) via org.eclipse.jetty.util.log.Slf4jLog</td>
+</tr>
+
+<tr>
+<td>55</td>
+<td title="main thread">main</td>
+<td title="Level">INFO</td>
+<td title="org.eclipse.jetty.util.log category">org.eclipse.jetty.util.log</td>
+<td title="Message">jetty-2.0.123</td>
+</tr>
+
+<tr>
+<td>2080</td>
+<td title="main thread">main</td>
+<td title="Level">INFO</td>
+<td title="org.eclipse.jetty.util.log category">org.eclipse.jetty.util.log</td>
+<td title="Message">Started SelectChannelConnector@0.0.0.0:8080</td>
+</tr>
+
+<tr>
+<td>3158</td>
+<td title="qtp1391942103-13 thread">qtp1391942103-13</td>
+<td title="Level">INFO</td>
+<td title="com.mockey.ui.HomeServlet category">com.mockey.ui.HomeServlet</td>
+<td title="Message">Filename '/Users/hb29220/projects/mobile-dependencies/clean_framework_1.0/example/test/mockey/mock_service_definitions.xml' does not exist. doing nothing.</td>
+</tr>
+
+<tr>
+<td>148195</td>
+<td title="qtp1391942103-20 thread">qtp1391942103-20</td>
+<td title="Level">INFO</td>
+<td title="com.mockey.ClientExecuteProxy category">com.mockey.ClientExecuteProxy</td>
+<td title="Message">Request: http://employees</td>
+</tr>
+
+<tr>
+<td>149593</td>
+<td title="qtp1391942103-20 thread">qtp1391942103-20</td>
+<td title="Level"><font color="#993300"><strong>ERROR</strong></font></td>
+<td title="com.mockey.ClientExecuteProxy category">com.mockey.ClientExecuteProxy</td>
+<td title="Message">java.net.UnknownHostException: employees: nodename nor servname provided, or not known</td>
+</tr>

@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:clean_framework/external_dependency.dart';
+import 'package:flutter/foundation.dart';
 
 /// This abstract class provides API to standardize the way http
 /// request actions such as get | put | delete | post are performed
@@ -11,8 +12,11 @@ import 'package:clean_framework/external_dependency.dart';
 enum RestMethod { get, post, put, delete, patch }
 
 abstract class RestApi<T extends RestResponse> extends ExternalDependency {
-  Future<T> request(
-      {RestMethod method, String uri, Map<String, dynamic> requestData});
+  Future<T> request({
+    @required RestMethod method,
+    @required String uri,
+    @required Map<String, dynamic> requestData,
+  });
 
   RestResponseType getResponseTypeFromCode(int code) =>
       _responseCodeToRestResponseTypeMap[code] ?? RestResponseType.unknown;
