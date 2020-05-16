@@ -1,3 +1,3 @@
-## 1.0
+## [0.0.1] Initial Release 2020-05-16
 
-* First version includes extracted common code.
+* First batch of clean framework components, with tests.

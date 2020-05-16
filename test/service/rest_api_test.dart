@@ -1,8 +1,11 @@
-import 'package:clean_framework/service/rest_api.dart';
-import 'package:flutter_test/flutter_test.dart';
+import 'package:clean_framework/clean_framework.dart';
+import 'package:test/test.dart';
 
 void main() {
   test('RestResponse asserts', () {
-    expect(() => RestResponse(content: null, uri: null), throwsAssertionError);
+    expect(() => RestResponse(content: null, uri: null),
+        throwsA(isA<AssertionError>()));
+    expect(() => RestResponse(content: '', uri: null),
+        throwsA(isA<AssertionError>()));
   });
 }
