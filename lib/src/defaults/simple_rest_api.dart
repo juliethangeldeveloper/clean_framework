@@ -1,9 +1,9 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:clean_framework/clean_framework.dart';
 import 'package:http/http.dart';
 import 'package:http/io_client.dart';
-import 'package:clean_framework/clean_framework.dart';
 
 class SimpleRestApi extends RestApi {
   final baseUrl;
@@ -22,7 +22,9 @@ class SimpleRestApi extends RestApi {
 
   @override
   Future<RestResponse> request(
-      {RestMethod method, String path, Map<String, dynamic> requestBody = const{}}) async {
+      {RestMethod method,
+      String path,
+      Map<String, dynamic> requestBody = const {}}) async {
     assert(method != null && path != null && path.isNotEmpty);
 
     Response response;

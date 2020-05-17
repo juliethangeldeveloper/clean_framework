@@ -3,9 +3,11 @@ import 'package:flutter/foundation.dart';
 
 class RestApiMock<C> extends RestApi {
   C _content;
-  RestResponseType _responseType = RestResponseType.unknown;
+  RestResponseType _responseType;
 
-  RestApiMock({@required C content, @required RestResponseType responseType})
+  RestApiMock(
+      {@required C content,
+      RestResponseType responseType = RestResponseType.success})
       : _content = content,
         _responseType = responseType;
 
