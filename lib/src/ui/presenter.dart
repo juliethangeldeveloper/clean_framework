@@ -4,7 +4,7 @@ import 'package:clean_framework/src/ui/screen.dart';
 import 'package:flutter/scheduler.dart';
 import 'package:flutter/widgets.dart';
 
-abstract class Presenter<B extends Bloc, V extends ViewModel>
+abstract class Presenter<B extends Bloc, V extends ViewModel, S extends Screen>
     extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
@@ -28,11 +28,13 @@ abstract class Presenter<B extends Bloc, V extends ViewModel>
 
   Stream<V> getViewModelStream(B bloc);
 
-  Screen buildScreen(BuildContext context, B bloc, V viewModel);
+  S buildScreen(BuildContext context, B bloc, V viewModel);
 
-  StatelessWidget buildLoadingScreen(BuildContext context);
+  Widget buildLoadingScreen(BuildContext context) =>
+      Container(key: Key('waitingForStream'));
 
-  StatelessWidget buildErrorScreen(BuildContext context, Error error);
+  Widget buildErrorScreen(BuildContext context, Error error) =>
+      Container(key: Key('noContentFromStream'));
 
   /// By default, the view model pipe should have a onListen callback on the
   /// bloc, causing to be unnecessary to create an event to retrieve it. If the

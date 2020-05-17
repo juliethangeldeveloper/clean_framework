@@ -2,9 +2,10 @@ import 'package:clean_framework/clean_framework.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-extension BlocProviderExtension on BuildContext {
-  B bloc<B extends Bloc>() => Provider.of<B>(this, listen: false);
-}
+// TODO See if this works later
+// extension BlocProviderExtension on BuildContext {
+//   B bloc<B extends Bloc>() => Provider.of<B>(this, listen: false);
+// }
 
 /// If provider of same type is found above [BlocProvider],
 /// new instance won't be create. i.e. [create] will be ignored.
@@ -36,7 +37,7 @@ class _BlocProviderState<B extends Bloc> extends State<BlocProvider<B>> {
     if (_bloc == null) {
       try {
         setState(() {
-          _bloc = context.bloc<B>();
+          _bloc = Provider.of<B>(context, listen: false);
         });
       } on ProviderNotFoundException catch (e) {
         if (widget.create != null)

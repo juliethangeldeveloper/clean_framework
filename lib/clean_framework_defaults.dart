@@ -5,3 +5,5 @@ export 'package:clean_framework/src/defaults/console_logger.dart';
 
 export 'package:clean_framework/src/defaults/json_response_bloc_handler.dart';
 export 'package:clean_framework/src/defaults/json_service.dart';
+
+export 'package:clean_framework/src/defaults/simple_rest_api.dart';

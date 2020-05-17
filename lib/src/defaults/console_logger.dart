@@ -1,4 +1,4 @@
-import 'package:clean_framework/src/logger.dart';
+import 'package:clean_framework/clean_framework.dart';
 
 class ConsoleLogger implements Logger {
   LogLevel _level = LogLevel.nothing;
@@ -10,31 +10,36 @@ class ConsoleLogger implements Logger {
 
   @override
   void fatal(message, [error, StackTrace stackTrace]) {
-    if (_level.index >= LogLevel.fatal.index) print("[FATAL]: $message");
+    if (_level.index >= LogLevel.fatal.index)
+      print('[FATAL]: $message ($error)');
   }
 
   @override
   void error(message, [error, StackTrace stackTrace]) {
-    if (_level.index >= LogLevel.error.index) print("[ERROR]: $message");
+    if (_level.index >= LogLevel.error.index)
+      print('[ERROR]: $message ($error)');
   }
 
   @override
   void warning(message, [error, StackTrace stackTrace]) {
-    if (_level.index >= LogLevel.warning.index) print("[WARNING]: $message");
+    if (_level.index >= LogLevel.warning.index)
+      print('[WARNING]: $message ($error)');
   }
 
   @override
   void info(message, [error, StackTrace stackTrace]) {
-    if (_level.index >= LogLevel.info.index) print("[INFO]: $message");
+    if (_level.index >= LogLevel.info.index) print('[INFO]: $message ($error)');
   }
 
   @override
   void debug(message, [error, StackTrace stackTrace]) {
-    if (_level.index >= LogLevel.debug.index) print("[DEBUG]: $message");
+    if (_level.index >= LogLevel.debug.index)
+      print('[DEBUG]: $message ($error)');
   }
 
   @override
   void verbose(message, [error, StackTrace stackTrace]) {
-    if (_level.index >= LogLevel.verbose.index) print("[VERBOSE]: $message");
+    if (_level.index >= LogLevel.verbose.index)
+      print('[VERBOSE]: $message ($error)');
   }
 }

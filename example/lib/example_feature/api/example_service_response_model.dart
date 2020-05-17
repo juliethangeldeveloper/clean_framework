@@ -1,4 +1,4 @@
-import 'package:clean_framework/service/json_service.dart';
+import 'package:clean_framework/clean_framework_defaults.dart';
 
 class ExampleServiceResponseModel extends JsonResponseModel {
   final String lastLogin;

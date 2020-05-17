@@ -1,3 +1,7 @@
+analizer:
+  errors:
+    missing_required_param: error
+
 linter:
   rules:
     # Errors

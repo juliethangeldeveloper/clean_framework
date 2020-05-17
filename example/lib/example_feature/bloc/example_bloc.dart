@@ -1,10 +1,11 @@
 import 'dart:async';
 
-import 'package:clean_framework/bloc/bloc.dart';
-import 'package:clean_framework_example/example_feature/model/example_view_model.dart';
+import 'package:clean_framework/clean_framework.dart';
+
+import '../model/example_view_model.dart';
 
 class ExampleBloc extends Bloc {
-  final exampleViewModelPipe = ViewModelBroadcastPipe<ExampleViewModel>();
+  final exampleViewModelPipe = Pipe<ExampleViewModel>();
 
   ExampleBloc() {
     exampleViewModelPipe.onListen(_exampleViewModelListener);
@@ -16,5 +17,10 @@ class ExampleBloc extends Bloc {
 
   Future<ExampleViewModel> get _exampleViewModel async {
     return ExampleViewModel();
+  }
+
+  @override
+  void dispose() {
+    exampleViewModelPipe.dispose();
   }
 }

@@ -1,12 +1,13 @@
-import 'package:clean_framework/bloc/bloc.dart';
-import 'package:clean_framework/logger.dart';
-import 'package:clean_framework/ui/presenter.dart';
-import 'package:clean_framework/ui/screen.dart';
-import 'package:clean_framework_example/example_feature/bloc/example_bloc.dart';
-import 'package:clean_framework_example/example_feature/model/example_view_model.dart';
-import 'package:clean_framework_example/example_locator.dart';
+import 'dart:async';
+
+import 'package:clean_framework/clean_framework.dart';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+
+import 'example_feature/bloc/example_bloc.dart';
+import 'example_feature/model/example_view_model.dart';
+import 'example_locator.dart';
 
 void main() {
   logger().setLogLevel(LogLevel.verbose);
@@ -16,21 +17,23 @@ void main() {
 class ExampleFeatureWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return BlocInheritedProvider(
-      bloc: ExampleBloc(),
+    return BlocProvider<ExampleBloc>(
+      create: (_) => ExampleBloc(),
       child: ExamplePresenter(),
     );
   }
 }
 
-class ExamplePresenter extends Presenter<ExampleBloc, ExampleViewModel> {
+class ExamplePresenter
+    extends Presenter<ExampleBloc, ExampleViewModel, ExampleScreen> {
   @override
   Stream<ExampleViewModel> getViewModelStream(ExampleBloc bloc) {
     return bloc.exampleViewModelPipe.receive;
   }
 
   @override
-  Widget buildScreen(BuildContext context, ExampleViewModel viewModel) {
+  ExampleScreen buildScreen(
+      BuildContext context, ExampleBloc bloc, ExampleViewModel viewModel) {
     return ExampleScreen();
   }
 }

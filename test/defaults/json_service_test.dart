@@ -165,8 +165,7 @@ void main() {
   });
 }
 
-class TestJsonService
-    extends JsonService<TestJsonRequestModel, TestJsonResponseModel> {
+class TestJsonService extends JsonService {
   TestJsonService(TestJsonServiceResponseHandler handler, RestMethod method,
       String path, RestApi restApi)
       : super(handler: handler, method: method, path: path, restApi: restApi);

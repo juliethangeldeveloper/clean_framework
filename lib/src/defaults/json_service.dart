@@ -1,29 +1,29 @@
+import 'dart:convert';
+
 import 'package:clean_framework/clean_framework.dart';
 
 abstract class JsonResponseModel extends ServiceResponseModel {
+  JsonResponseModel();
   // I have to find yet a way to force this constructor on implementation
-  // ignore: coverage
-  JsonResponseModel.fromJson(Map<String, dynamic> json);
+  // JsonResponseModel.fromJson(Map<String, dynamic> json);
 }
 
 abstract class JsonRequestModel extends ServiceRequestModel {
   Map<String, dynamic> toJson();
 }
 
-abstract class JsonService<R extends JsonRequestModel,
-    S extends JsonResponseModel> implements Service<R, S> {
+abstract class JsonService<
+    R extends JsonRequestModel,
+    S extends JsonResponseModel,
+    H extends JsonServiceResponseHandler<S>> implements Service<R, S> {
   RestApi _restApi;
   String _path;
   RestMethod _method;
-  JsonServiceResponseHandler<S> _handler;
+  H _handler;
 
   final String path;
 
-  JsonService(
-      {JsonServiceResponseHandler<S> handler,
-      RestMethod method,
-      this.path,
-      RestApi restApi})
+  JsonService({H handler, RestMethod method, this.path, RestApi restApi})
       : assert(handler != null),
         assert(method != null),
         assert(path != null && path.isNotEmpty),
@@ -81,9 +81,12 @@ abstract class JsonService<R extends JsonRequestModel,
     S model;
 
     try {
-      model = parseResponse(response.content);
+      final Map<String, dynamic> jsonResponse =
+          json.decode(response.content) ?? <String, dynamic>{};
+      model = parseResponse(jsonResponse);
     } on Error catch (e) {
-      Locator().logger.debug('JSON Parse error', e.toString(), e.stackTrace);
+      Locator().logger.debug(
+          'JsonService response parse error', e.toString(), e.stackTrace);
       _handler.onInvalidResponse(response.content);
       return;
     }
@@ -91,7 +94,7 @@ abstract class JsonService<R extends JsonRequestModel,
   }
 
   List<String> _getVariablesFromPath({bool check = false}) {
-    RegExp exp = RegExp(r"{(\w+)}");
+    RegExp exp = RegExp(r'{(\w+)}');
     Iterable<RegExpMatch> matches = exp.allMatches(check ? _path : path);
     final foundVariables =
         matches.map((m) => m.group(1)).toList(growable: false);
