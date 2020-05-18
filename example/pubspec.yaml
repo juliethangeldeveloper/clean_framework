@@ -1,5 +1,5 @@
 name: clean_framework_example
-description: A new Flutter project.
+description: Sandbox with example of all components from clean framework.
 
 version: 1.0.0
 
@@ -11,10 +11,13 @@ dependencies:
     sdk: flutter
   clean_framework:
     path: ../
+    
+  intl: ^0.16.1
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+  mockito:
 
 
 # For information on the generic Dart part of this file, see the

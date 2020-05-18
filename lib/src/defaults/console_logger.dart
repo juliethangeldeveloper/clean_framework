@@ -1,9 +1,9 @@
 import 'package:clean_framework/clean_framework.dart';
 
 class ConsoleLogger implements Logger {
-  LogLevel _level = LogLevel.nothing;
+  LogLevel _level;
 
-  ConsoleLogger([this._level]);
+  ConsoleLogger([this._level = LogLevel.nothing]);
 
   @override
   void setLogLevel(LogLevel level) => this._level = level;

@@ -1,10 +1,10 @@
 import 'package:clean_framework/clean_framework.dart';
 
 class MemoryLogger implements Logger {
-  LogLevel _level = LogLevel.verbose;
+  LogLevel _level;
   StringBuffer _logBuffer = StringBuffer('');
 
-  MemoryLogger([this._level]);
+  MemoryLogger([this._level = LogLevel.verbose]);
 
   String get dump => _logBuffer.toString();
 

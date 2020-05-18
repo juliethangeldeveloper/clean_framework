@@ -6,7 +6,7 @@ import 'example_service_response_model.dart';
 
 class ExampleService extends JsonService {
   ExampleService({
-    JsonServiceResponseHandler<ExampleServiceResponseModel> handler,
+    handler,
   })  : assert(handler != null),
         super(
             handler: handler,

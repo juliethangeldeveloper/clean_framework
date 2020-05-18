@@ -26,9 +26,9 @@ void main() {
   });
 
   test('JsonService GET success', () async {
-    final restApiMock = RestApiMock<Map<String, dynamic>>(
+    final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.success,
-      content: <String, dynamic>{'field': 123},
+      content: '{"field": 123}',
     );
     final handler = TestJsonServiceResponseHandler();
     final service =
@@ -42,9 +42,9 @@ void main() {
   });
 
   test('JsonService GET success with request varible', () async {
-    final restApiMock = RestApiMock<Map<String, dynamic>>(
+    final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.success,
-      content: <String, dynamic>{'field': 123},
+      content: '{"field": 123}',
     );
     final handler = TestJsonServiceResponseHandler();
     final service =
@@ -60,9 +60,9 @@ void main() {
   });
 
   test('JsonService GET server error', () async {
-    final restApiMock = RestApiMock<Map<String, dynamic>>(
+    final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.internalServerError,
-      content: <String, dynamic>{},
+      content: '',
     );
     final handler = TestJsonServiceResponseHandler();
     final service =
@@ -74,9 +74,9 @@ void main() {
   });
 
   test('JsonService GET invalid request', () async {
-    final restApiMock = RestApiMock<Map<String, dynamic>>(
+    final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.success,
-      content: <String, dynamic>{'field': 'value'},
+      content: "{'field': 'value'}",
     );
     final handler = TestJsonServiceResponseHandler();
     final service =
@@ -117,8 +117,8 @@ void main() {
   });
 
   test('JsonService GET invalid response', () async {
-    var invalidResponse = <String, dynamic>{'field': 'not number'};
-    final restApiMock = RestApiMock<Map<String, dynamic>>(
+    var invalidResponse = "{'field': 'not number'}";
+    final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.success,
       content: invalidResponse,
     );
@@ -152,9 +152,9 @@ void main() {
   });
 
   test('JsonService GET socket error', () async {
-    final restApiMock = RestApiMock<Map<String, dynamic>>(
+    final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.unknown,
-      content: {},
+      content: '',
     );
     var handler = TestJsonServiceResponseHandler();
     var service = TestJsonService(handler, RestMethod.get, 'test', restApiMock);
@@ -213,7 +213,7 @@ class TestJsonServiceResponseHandler
   TestJsonResponseModel model;
   RestResponseType errorType;
   Map<String, dynamic> invalidRequestModel;
-  Map<String, dynamic> invalidResponse;
+  String invalidResponse;
   bool isOffline;
 
   void reset() {
@@ -225,7 +225,7 @@ class TestJsonServiceResponseHandler
   }
 
   @override
-  void onError(RestResponseType responseType, Map<String, dynamic> content) {
+  void onError(RestResponseType responseType, String response) {
     errorType = responseType;
   }
 
@@ -240,8 +240,8 @@ class TestJsonServiceResponseHandler
   }
 
   @override
-  void onInvalidResponse(Map<String, dynamic> responseJson) {
-    invalidResponse = responseJson;
+  void onInvalidResponse(String response) {
+    invalidResponse = response;
   }
 
   @override

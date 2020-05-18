@@ -89,7 +89,14 @@ abstract class JsonService<
           'JsonService response parse error', e.toString(), e.stackTrace);
       _handler.onInvalidResponse(response.content);
       return;
+    } on Exception catch (e) {
+      Locator()
+          .logger
+          .debug('JsonService response parse exception', e.toString());
+      _handler.onInvalidResponse(response.content);
+      return;
     }
+
     _handler.onSuccess(model);
   }
 
@@ -152,6 +159,6 @@ abstract class JsonServiceResponseHandler<S extends JsonResponseModel>
     extends ServiceResponseHandler<S> {
   void onMissingPathData(Map<String, dynamic> requestJson);
   void onInvalidRequest(Map<String, dynamic> requestJson);
-  void onInvalidResponse(Map<String, dynamic> responseJson);
-  void onError(RestResponseType responseType, Map<String, dynamic> content);
+  void onInvalidResponse(String response);
+  void onError(RestResponseType responseType, String response);
 }

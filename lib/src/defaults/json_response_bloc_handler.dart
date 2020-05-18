@@ -14,7 +14,7 @@ class JsonResponseBlocHandler<B extends ErrorPublisherBloc,
         assert(success != null);
 
   @override
-  void onError(RestResponseType responseType, Map<String, dynamic> content) {
+  void onError(RestResponseType responseType, String response) {
     bloc.handleError(PublishedErrorType.general);
     hadError = true;
   }
@@ -32,7 +32,7 @@ class JsonResponseBlocHandler<B extends ErrorPublisherBloc,
   }
 
   @override
-  void onInvalidResponse(Map<String, dynamic> responseJson) {
+  void onInvalidResponse(String response) {
     bloc.handleError(PublishedErrorType.general);
     hadError = true;
   }

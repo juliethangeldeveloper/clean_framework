@@ -20,7 +20,7 @@ class BlocProvider<B extends Bloc> extends StatefulWidget {
   }) : super(key: key);
 
   static of<B extends Bloc>(BuildContext context) {
-    return Provider.of<B>(context);
+    return Provider.of<B>(context, listen: false);
   }
 
   @override
