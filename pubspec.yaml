@@ -1,40 +1,23 @@
 name: clean_framework
-version: 1.0.0
-author: hnb
-description: Library for clean architecture components.
+description: Clean Architecture components library, inspired on the guidelines created by Uncle Bob.
+version: 0.1.0
+homepage: http://acme-software.com
+
 environment:
-  sdk: '>=2.0.0-dev.17.0 <3.0.0'
+  sdk: ">=2.7.0 <3.0.0"
 
 dependencies:
   flutter:
     sdk: flutter
 
-  ##############################################################################
+  equatable: ^1.1.1
 
-  #                         EXTERNAL DEPENDENCIES
+  provider: ^4.1.2
 
-  ##############################################################################
-  #  1.   PLEASE KEEP ALL DEPENDENCIES IN ALPHABETICAL ORDER
-  #  2.   DON'T USE CARETS FOR VERSIONS, THE VERSION IS DETERMINED BY THE
-  #       CODE IN THE MOBILE DEPENDENCIES REPOSITORY.
-  #  3.   ANNOTATE WITH A COMMENT UNDER THE LIBRARY ALL THE DEPENDENCIES IT
-  #       USES, DOING IT RECURSIVELY UNTIL NO MORE DEPENDENCIES ARE FOUND.
-  #       (IGNORE THE FLUTTER DEPENDENCY, ITS ALWAYS ASSUMED IT EXISTS)
-  #  4.   ANY PULL REQUEST THAT ADDS A LIBRARY WILL NOT GET MERGED BEFORE
-  #       ITS CODE AND THE CODE OF ALL DEPENDENCIES ARE ALREADY IN THE
-  #       MOBILE DEPENDENCIES REPOSITORY.
-  ##############################################################################
-
-  device_info: 0.4.0+2
-  # No dependencies
-
-  http: 0.12.0+2
-
-  package_info: 0.4.0+17
-  #No dependencies
+  http: ^0.12.0+2
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
-  test: ^1.0.0
-  mockito: 4.1.1
+  test: ^1.6.3
+  mockito: ^4.1.1

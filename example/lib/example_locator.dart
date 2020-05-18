@@ -1,7 +1,5 @@
-import 'package:clean_framework/implement/console_logger.dart';
-import 'package:clean_framework/implement/simple_rest_api.dart';
-import 'package:clean_framework/locator.dart';
-import 'package:clean_framework/logger.dart';
+import 'package:clean_framework/clean_framework.dart';
+import 'package:clean_framework/clean_framework_defaults.dart';
 
 ExampleLocator locator() => ExampleLocator();
 Logger logger() => ExampleLocator().logger;
@@ -12,6 +10,8 @@ class ExampleLocator implements Locator {
     Locator.instance ??= ExampleLocator._();
     return Locator.instance;
   }
+  @override
+  Connectivity connectivity = AlwaysOnlineConnectivity();
 
   @override
   Logger logger = ConsoleLogger(LogLevel.nothing);

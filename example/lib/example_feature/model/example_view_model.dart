@@ -1,4 +1,4 @@
-import 'package:clean_framework/models.dart';
+import 'package:clean_framework/clean_framework.dart';
 
 class ExampleViewModel extends ViewModel {
   final DateTime lastLogin;
