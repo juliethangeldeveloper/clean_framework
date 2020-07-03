@@ -163,6 +163,25 @@ void main() {
     expect(handler.model, isNull);
     expect(handler.errorType, RestResponseType.unknown);
   });
+
+  test('JsonService POST success', () async {
+    final restApiMock = RestApiMock<String>(
+      responseType: RestResponseType.success,
+      content: '{"field": 123}',
+    );
+
+    final requestModel = TestJsonRequestModel(id: '123');
+
+    final handler = TestJsonServiceResponseHandler();
+    final service =
+        TestJsonService(handler, RestMethod.post, 'test', restApiMock);
+
+    await service.request(requestModel: requestModel);
+    expect(handler.errorType, isNull);
+    expect(handler.model, isNotNull);
+    expect(handler.model.field, 123);
+    expect(handler.model.optionalField, 'default');
+  });
 }
 
 class TestJsonService extends JsonService {
