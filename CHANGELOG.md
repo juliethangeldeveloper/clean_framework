@@ -1,3 +1,7 @@
+## [0.1.1] Json Service POST fix (2020-07-03)
+
+* A JsonService was not sending correctly the JSON body as a request parameter to RestAPI, so it was fixed.
+
 ## [0.1.0] First Minor Release (2020-05-17)
 
 * Added the rest of the code to the example project, with tests.

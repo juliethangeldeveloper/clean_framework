@@ -66,7 +66,8 @@ abstract class JsonService<
       }
     }
 
-    final response = await _restApi.request(method: _method, path: _path);
+    final response = await _restApi.request(
+        method: _method, path: _path, requestBody: requestJson);
 
     if (response.type == RestResponseType.timeOut) {
       _handler.onNoConnectivity();
