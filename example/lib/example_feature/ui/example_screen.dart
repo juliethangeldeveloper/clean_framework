@@ -10,6 +10,7 @@ class ExampleScreen extends Screen {
       : assert(() {
           return viewModel != null;
         }());
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

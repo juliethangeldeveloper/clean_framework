@@ -5,13 +5,13 @@ import 'package:clean_framework_example/example_feature/api/example_service_resp
 import 'package:clean_framework_example/example_locator.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-
 void main() {
   logger().setLogLevel(LogLevel.verbose);
 
   /// To execute this test, Mockey has to be running with the XML provided in the example folder
   test('ExampleService success', () async {
-    final handlerMock = JsonServiceResponseHandlerMock<ExampleServiceResponseModel>();
+    final handlerMock =
+        JsonServiceResponseHandlerMock<ExampleServiceResponseModel>();
     final service = ExampleService(handler: handlerMock);
     await service.request();
     final response = handlerMock.responseModel;
