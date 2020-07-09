@@ -1,22 +1,22 @@
-import 'dart:async';
-
 import 'package:clean_framework/clean_framework.dart';
 import 'package:clean_framework/clean_framework_defaults.dart';
 import 'package:clean_framework_example/example_feature/api/example_service.dart';
 import 'package:clean_framework_example/example_feature/api/example_service_response_model.dart';
-import 'package:clean_framework_example/example_feature/model/example_business_model.dart';
+import 'package:clean_framework_example/example_feature/bloc/example_usecase.dart';
+import 'package:clean_framework_example/example_feature/model/example_entity.dart';
 import 'package:clean_framework_example/example_feature/model/example_view_model.dart';
 import 'package:flutter/material.dart';
 
 export 'package:clean_framework_example/example_feature/model/example_view_model.dart';
 
-class ExampleBloc extends ErrorPublisherBloc {
+class ExampleBloc extends Bloc {
   ExampleService _exampleService;
   @visibleForTesting
-  JsonResponseBlocHandler<ExampleBloc, ExampleServiceResponseModel>
+  JsonResponseBlocCallbackHandler<ExampleServiceResponseModel>
       exampleServiceHandler;
 
-  ExampleBusinessModel _businessModel = ExampleBusinessModel();
+  ExampleEntity _exampleEntity = ExampleEntity();
+  ExampleUseCase _usecase;
 
   final exampleViewModelPipe = Pipe<ExampleViewModel>();
 
@@ -26,9 +26,11 @@ class ExampleBloc extends ErrorPublisherBloc {
   }
 
   ExampleBloc({ExampleService exampleService}) {
+    _usecase = ExampleUseCase(exampleEntity: _exampleEntity);
+
     exampleServiceHandler =
-        JsonResponseBlocHandler<ExampleBloc, ExampleServiceResponseModel>(
-            bloc: this, success: _exampleServiceSuccess);
+        JsonResponseBlocCallbackHandler<ExampleServiceResponseModel>(
+            success: _exampleServiceSuccess, error: _exampleServiceError);
     _exampleService =
         exampleService ?? ExampleService(handler: exampleServiceHandler);
 
@@ -39,18 +41,14 @@ class ExampleBloc extends ErrorPublisherBloc {
     await _exampleService.request();
     // If the request is successful, the business model already holds the response
     // values at this point.
-    exampleViewModelPipe.send(await _exampleViewModel);
-  }
-
-  Future<ExampleViewModel> get _exampleViewModel async {
-    return ExampleViewModel(
-        lastLogin: _businessModel.lastLogin,
-        loginCount: _businessModel.loginCount);
+    exampleViewModelPipe.send(_usecase.exampleViewModel);
   }
 
   void _exampleServiceSuccess(ExampleServiceResponseModel responseModel) {
-    _businessModel
-      ..lastLogin = DateTime.tryParse(responseModel.lastLogin) ?? DateTime.now()
-      ..loginCount = responseModel.loginCount;
+    _usecase.setEntitySnapshot(EntitySnapshot(data: responseModel));
+  }
+
+  void _exampleServiceError(PublishedErrorType errorType) {
+    _usecase.setEntitySnapshot(EntitySnapshot(error: errorType));
   }
 }

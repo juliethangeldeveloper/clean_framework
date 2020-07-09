@@ -13,3 +13,9 @@ void main() {
     ),
   );
 }
+
+/// 8-Jul Changes
+/// New class JsonResponseBlocCallbackHandler
+/// Bloc to own Entity creation and share the reference to usecases those that needs it.
+/// Within usecase updates on the Entity should happen on the instance created by Bloc.
+/// Fix testcases
