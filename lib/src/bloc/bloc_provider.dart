@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 extension BlocProviderExtension on BuildContext {
-  B bloc<B extends Bloc>() => read<B>();
+  B bloc<B extends Bloc>() => Provider.of<B>(this, listen: false);
 }
 
 /// If provider of same type is found above [BlocProvider],
@@ -18,7 +18,8 @@ class BlocProvider<B extends Bloc> extends StatefulWidget {
     @required this.child,
   }) : super(key: key);
 
-  static of<B extends Bloc>(BuildContext context) => context.read<B>();
+  static of<B extends Bloc>(BuildContext context) =>
+      Provider.of<B>(context, listen: false);
 
   @override
   _BlocProviderState createState() => _BlocProviderState<B>();
