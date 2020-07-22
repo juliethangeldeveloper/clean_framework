@@ -5,6 +5,7 @@ class Pipe<T> {
   StreamController<T> _controller;
   bool hasListeners = false;
   T initialData;
+  T _lastData;
 
   Stream<T> get receive => _controller.stream;
 
@@ -34,7 +35,8 @@ class Pipe<T> {
   }
 
   bool send(T data) {
-    if (_controller.isClosed) return false;
+    if (_controller.isClosed || _lastData == data) return false;
+    _lastData = data;
     _controller.sink.add(data);
     return true;
   }
@@ -53,9 +55,16 @@ class EventPipe extends Pipe<void> {
   @override
   get receive => null;
 
+  @override
+  bool send(_) {
+    if (_controller.isClosed) return false;
+    _controller.sink.add(null);
+    return true;
+  }
+
   bool launch() => send(null);
 
-  StreamSubscription<void> listen(void onData()) {
-    return _controller.stream.listen((_) => onData());
+  StreamSubscription<void> listen(void onData(), {Function onError}) {
+    return _controller.stream.listen((_) => onData(), onError: onError);
   }
 }

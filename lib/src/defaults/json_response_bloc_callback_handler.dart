@@ -1,12 +1,12 @@
 import 'package:clean_framework/clean_framework.dart';
 import 'package:clean_framework/clean_framework_defaults.dart';
 
-typedef SuccessCallback<M extends ServiceResponseModel> = void Function(M model);
+typedef SuccessCallback<M extends ServiceResponseModel> = void Function(
+    M model);
 typedef ErrorCallback = void Function(PublishedErrorType model);
 
-class JsonResponseBlocCallbackHandler<
-    M extends JsonResponseModel> implements JsonServiceResponseHandler<M> {
-  
+class JsonResponseBlocCallbackHandler<M extends JsonResponseModel>
+    implements JsonServiceResponseHandler<M> {
   final SuccessCallback<M> success;
   final ErrorCallback error;
 

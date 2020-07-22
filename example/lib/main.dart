@@ -7,6 +7,7 @@ import 'example_locator.dart';
 
 void main() {
   logger().setLogLevel(LogLevel.verbose);
+
   runApp(
     MaterialApp(
       home: ExampleFeatureWidget(),

@@ -46,6 +46,7 @@ class _BlocProviderState<B extends Bloc> extends State<BlocProvider<B>> {
     return Provider<B>.value(
       value: _bloc,
       child: widget.child,
+      dispose: (_, __) => _bloc.dispose(),
     );
   }
 

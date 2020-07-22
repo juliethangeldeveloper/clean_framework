@@ -1,0 +1,123 @@
+import 'dart:async';
+
+import 'package:clean_framework/clean_framework.dart';
+import 'package:clean_framework_example/payment/bloc/payment_bloc.dart';
+import 'package:clean_framework_example/payment/model/payment_view_model.dart';
+import 'package:clean_framework_example/payment/ui/payment_screen.dart';
+import 'package:flutter/cupertino.dart';
+import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
+import 'package:flutter/src/widgets/framework.dart';
+
+class PaymentPresenter
+    extends Presenter<PaymentBloc, PaymentViewModel, PaymentScreen> {
+  @override
+  Stream<PaymentViewModel> getViewModelStream(PaymentBloc bloc) {
+    return bloc.paymentViewModelPipe.receive;
+  }
+
+  @override
+  PaymentScreen buildScreen(
+      BuildContext context, PaymentBloc bloc, PaymentViewModel viewModel) {
+    SchedulerBinding.instance.addPostFrameCallback((_) {
+      if (viewModel.serviceStatus == ServiceStatus.successful) {
+        _navigateToDetailScreen(context);
+      } else if (viewModel.serviceStatus == ServiceStatus.failed) {
+        _showErrorDialog(context);
+      } else if (viewModel.dataStatus == DataStatus.invalid) {
+        _showInvalidDataDialog(context);
+      }
+    });
+    return PaymentScreen(
+      viewModel: viewModel,
+      onChangeFromAccount: (value) {
+        _onChangeFromAccount(value, bloc);
+      },
+      onChangeToAccount: (value) {
+        _onChangeToAccount(value, bloc);
+      },
+      onChangeAmount: (value) {
+        _onChangeAmount(value, bloc);
+      },
+      onTapSubmit: () {
+        _onTapSubmit(bloc);
+      },
+    );
+  }
+
+  @override
+  Widget buildLoadingScreen(BuildContext context) {
+    return Center(
+      child: CircularProgressIndicator(),
+    );
+  }
+
+  void _onChangeFromAccount(String text, PaymentBloc bloc) {
+    bloc.fromAccountPipe.send(text);
+  }
+
+  void _onChangeToAccount(String text, PaymentBloc bloc) {
+    bloc.toAccountPipe.send(text);
+  }
+
+  void _onChangeAmount(String value, PaymentBloc bloc) {
+    double amount = double.tryParse(value);
+    if (amount != null) {
+      bloc.amountPipe.send(amount);
+    }
+  }
+
+  void _onTapSubmit(PaymentBloc bloc) {
+    bloc.submitPipe.launch();
+  }
+
+  void _navigateToDetailScreen(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text('Success'),
+              content: Text('Submit Succeeded'),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).popUntil((route) {
+                        return route.isFirst;
+                      });
+                    },
+                    child: Text('OK'))
+              ],
+            ));
+  }
+
+  void _showErrorDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text('Error'),
+              content: Text('Submit Failed'),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'))
+              ],
+            ));
+  }
+
+  void _showInvalidDataDialog(BuildContext context) {
+    showDialog(
+        context: context,
+        builder: (_) => AlertDialog(
+              title: Text('Invalid'),
+              content: Text('Data entered is incorrect.'),
+              actions: <Widget>[
+                FlatButton(
+                    onPressed: () {
+                      Navigator.of(context).pop();
+                    },
+                    child: Text('OK'))
+              ],
+            ));
+  }
+}

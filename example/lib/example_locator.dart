@@ -19,4 +19,6 @@ class ExampleLocator implements Locator {
   @override
   Logger logger = ConsoleLogger(LogLevel.nothing);
   SimpleRestApi api = SimpleRestApi();
+
+  Repository repository = Repository();
 }

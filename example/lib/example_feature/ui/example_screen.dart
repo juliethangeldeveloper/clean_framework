@@ -5,8 +5,10 @@ import 'package:intl/intl.dart';
 
 class ExampleScreen extends Screen {
   final ExampleViewModel viewModel;
+  final VoidCallback navigateToMakePayment;
 
-  ExampleScreen({@required this.viewModel})
+  ExampleScreen(
+      {@required this.viewModel, @required this.navigateToMakePayment})
       : assert(() {
           return viewModel != null;
         }());
@@ -27,6 +29,12 @@ class ExampleScreen extends Screen {
               ListTile(
                 title: Text('Login Count'),
                 subtitle: Text(viewModel.loginCount.toString()),
+              ),
+              RaisedButton(
+                child: Text('Make Payment'),
+                onPressed: () {
+                  navigateToMakePayment();
+                },
               )
             ]),
           ),
