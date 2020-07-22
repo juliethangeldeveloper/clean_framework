@@ -1,52 +1,44 @@
 import 'dart:convert';
 
 import 'package:clean_framework/clean_framework.dart';
+import 'package:either_option/either_option.dart';
+import 'package:flutter/foundation.dart';
 
-abstract class JsonResponseModel extends ServiceResponseModel {
-  JsonResponseModel();
-  // I have to find yet a way to force this constructor on implementation
-  // JsonResponseModel.fromJson(Map<String, dynamic> json);
-}
+import 'json_service.dart';
 
-abstract class JsonRequestModel extends ServiceRequestModel {
-  Map<String, dynamic> toJson();
-}
-
-abstract class JsonService<
-    R extends JsonRequestModel,
-    S extends JsonResponseModel,
-    H extends JsonServiceResponseHandler<S>> implements Service<R, S> {
+abstract class EitherService<R extends JsonRequestModel,
+    S extends JsonResponseModel> implements Service<R, S> {
   RestApi _restApi;
   String _path;
   RestMethod _method;
-  H _handler;
 
   final String path;
 
-  JsonService({H handler, RestMethod method, this.path, RestApi restApi})
-      : assert(handler != null),
-        assert(method != null),
+  EitherService(
+      {@required RestMethod method,
+      @required this.path,
+      @required RestApi restApi})
+      : assert(method != null),
         assert(path != null && path.isNotEmpty),
         assert(restApi != null),
-        _handler = handler,
         _path = path,
         _method = method,
         _restApi = restApi;
 
   @override
-  Future<void> request({R requestModel}) async {
+  Future<Either<ServiceError, S>> request({R requestModel}) async {
     if (await Locator().connectivity.getConnectivityStatus() ==
         ConnectivityStatus.offline) {
-      _handler.onNoConnectivity();
-      return;
+      Locator().logger.debug('JsonService response no connectivity error');
+      return Left(NoConnectivityServiceError());
     }
 
     Map<String, dynamic> requestJson;
     if (requestModel != null) {
       requestJson = requestModel.toJson();
       if (!isRequestModelJsonValid(requestJson)) {
-        _handler.onInvalidRequest(requestJson);
-        return;
+        Locator().logger.debug('JsonService response invalid request error');
+        return Left(GeneralServiceError());
       }
     }
 
@@ -54,15 +46,19 @@ abstract class JsonService<
     if (variablesInPath.length > 0) {
       if (requestModel == null) {
         // If a service has a variable in the path, request data is required
-        _handler.onInvalidRequest(null);
-        return;
+        Locator()
+            .logger
+            .debug('JsonService response missing request parameters');
+        return Left(GeneralServiceError());
       }
       requestJson =
           _filterRequestDataAndUpdatePath(variablesInPath, requestJson);
       if (_getVariablesFromPath(check: true).isNotEmpty) {
         // Some variables where not substituted by request fields
-        _handler.onInvalidRequest(requestJson);
-        return;
+        Locator()
+            .logger
+            .debug('JsonService response invalid request parameters');
+        return Left(GeneralServiceError());
       }
     }
 
@@ -70,12 +66,12 @@ abstract class JsonService<
         method: _method, path: _path, requestBody: requestJson);
 
     if (response.type == RestResponseType.timeOut) {
-      _handler.onNoConnectivity();
-      return;
+      Locator().logger.debug('JsonService response no connectivity error');
+      return Left(NoConnectivityServiceError());
     } else if (response.type != RestResponseType.success) {
-      if (!onError(response, _handler)) {
-        _handler.onError(response.type, response.content);
-        return;
+      ServiceError error = onError(response);
+      if (!(error is NoServiceError)) {
+        return Left(error);
       }
     }
 
@@ -88,17 +84,15 @@ abstract class JsonService<
       model = parseResponse(jsonResponse);
     } on Error catch (e) {
       Locator().logger.debug('JsonService response parse error', e.toString());
-      _handler.onInvalidResponse(response.content);
-      return;
+      return Left(GeneralServiceError());
     } on Exception catch (e) {
       Locator()
           .logger
           .debug('JsonService response parse exception', e.toString());
-      _handler.onInvalidResponse(response.content);
-      return;
+      return Left(GeneralServiceError());
     }
 
-    _handler.onSuccess(model);
+    return Right(model);
   }
 
   List<String> _getVariablesFromPath({bool check = false}) {
@@ -151,15 +145,15 @@ abstract class JsonService<
 
   S parseResponse(Map<String, dynamic> jsonResponse);
 
-  bool onError(RestResponse response, JsonServiceResponseHandler<S> handler) {
-    return false;
+  ServiceError onError(RestResponse response) {
+    return NoServiceError();
   }
 }
 
-abstract class JsonServiceResponseHandler<S extends JsonResponseModel>
-    extends ServiceResponseHandler<S> {
-  void onMissingPathData(Map<String, dynamic> requestJson);
-  void onInvalidRequest(Map<String, dynamic> requestJson);
-  void onInvalidResponse(String response);
-  void onError(RestResponseType responseType, String response);
-}
+abstract class ServiceError {}
+
+class NoServiceError extends ServiceError {}
+
+class GeneralServiceError extends ServiceError {}
+
+class NoConnectivityServiceError extends ServiceError {}

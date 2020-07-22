@@ -1,6 +1,7 @@
-import 'package:clean_framework/clean_framework.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
+
+import 'bloc.dart';
 
 // TODO See if this works later
 // extension BlocProviderExtension on BuildContext {
@@ -55,6 +56,7 @@ class _BlocProviderState<B extends Bloc> extends State<BlocProvider<B>> {
     return Provider<B>(
       create: (_) => _bloc,
       child: widget.child,
+      dispose: (_, __) => _bloc.dispose(),
     );
   }
 }

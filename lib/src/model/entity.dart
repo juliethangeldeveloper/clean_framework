@@ -1,24 +1,26 @@
-import 'package:clean_framework/clean_framework.dart';
+import 'package:equatable/equatable.dart';
+import 'package:flutter/foundation.dart';
 
-abstract class Entity {
-  PublishedErrorType _error;
+@immutable
+class Entity extends Equatable {
+  final List<EntityError> errors;
 
-  PublishedErrorType get error => _error;
+  Entity({this.errors = const []});
+  bool hasErrors() => errors.isNotEmpty;
+  bool hasError(EntityError error) => errors.indexOf(error) > 0;
 
-  set error(PublishedErrorType value) {
-    _error = value;
+  merge({errors}) {
+    return Entity(errors: errors);
   }
 
-  dynamic assertErrorState(dynamic data) {
-    return (_error == null) ? data : throw Error();
-  }
-
-  dynamic setData(dynamic data) {
-    _error = null;
-    return data;
-  }
-
-  hasError() {
-    return _error != null;
-  }
+  @override
+  List<Object> get props => [errors];
 }
+
+class EntityError {
+  const EntityError();
+}
+
+class GeneralError extends EntityError {}
+
+class NoConnectivityError extends EntityError {}
