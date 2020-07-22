@@ -1,3 +1,10 @@
+## [0.1.4] Repository (2020-07-22)
+
+* Added the Repository class, which is used as the bridge between services and the use cases.
+* Minor fix on Pipe to avoid sending repeated data.
+* Minor fix on BlocProvider, it now calls the dispose of the bloc when it disposes itself.
+* Improved example, with another screen that accepts a generic payment.
+
 ## [0.1.3] Bloc Provider Bug Fix (2020-07-15)
 
 ## [0.1.2] Use Case and Entity (2020-07-03)
