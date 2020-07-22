@@ -1,5 +1,4 @@
 import 'package:clean_framework/clean_framework.dart';
-import 'package:clean_framework/clean_framework_tests.dart';
 import 'package:clean_framework_example/example_feature/api/example_service.dart';
 import 'package:clean_framework_example/example_feature/api/example_service_response_model.dart';
 import 'package:clean_framework_example/example_locator.dart';
@@ -10,14 +9,13 @@ void main() {
 
   /// To execute this test, Mockey has to be running with the XML provided in the example folder
   test('ExampleService success', () async {
-    final handlerMock =
-        JsonServiceResponseHandlerMock<ExampleServiceResponseModel>();
-    final service = ExampleService(handler: handlerMock);
-    await service.request();
-    final response = handlerMock.responseModel;
+    final service = ExampleService();
+    final eitherResponse = await service.request();
 
-    expect(response, isA<ExampleServiceResponseModel>());
-    expect(response.lastLogin, '2020-05-01');
-    expect(response.loginCount, 3);
+    expect(eitherResponse.isRight, isTrue);
+    expect(
+        eitherResponse.fold((_) {}, (m) => m),
+        ExampleServiceResponseModel.fromJson(
+            {'lastLogin': '2020-05-01', 'loginCount': 3}));
   });
 }

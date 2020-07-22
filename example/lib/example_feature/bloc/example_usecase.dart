@@ -1,93 +1,42 @@
 import 'package:clean_framework/clean_framework.dart';
-import 'package:clean_framework_example/example_feature/api/example_service_response_model.dart';
+import 'package:clean_framework_example/example_feature/bloc/example_service_adapter.dart';
 import 'package:clean_framework_example/example_feature/model/example_entity.dart';
 import 'package:clean_framework_example/example_feature/model/example_view_model.dart';
+import 'package:clean_framework_example/example_locator.dart';
+
+/// UseCase is a declarative chain of pure functions (instruction or command).
+/// Commands are async functions that return an Either or Maybe.
+/// The commands will receive the state and create new states.
+///   a) Developers cannot change state when it is not allowed.
+///   b) History of changes.
+/// Bloc events will launch UseCases, while listening to publications from the UseCase that
+///   returns a ViewModel, which is pushed down to the Presenter.
 
 class ExampleUseCase extends UseCase {
-  // ExampleEntity _exampleEntity = ExampleEntity();
-  final ExampleEntity _exampleEntity;
+  Function(ViewModel) _viewModelCallBack;
 
-  ExampleUseCase({exampleEntity}) : _exampleEntity = exampleEntity;
+  ExampleUseCase(Function(ViewModel) viewModelCallBack)
+      : assert(viewModelCallBack != null),
+        _viewModelCallBack = viewModelCallBack;
 
-  //  void setResponse(ExampleServiceResponseModel responseModel){
-  //  void setResponse(ExampleServiceResponseModel responseModel, PublishedErrorType errorType){
+  void execute() async {
+    final scope = ExampleLocator()
+        .repository
+        .create<ExampleEntity>(ExampleEntity(), _notifySubscribers);
 
-  void setEntitySnapshot(EntitySnapshot<ExampleServiceResponseModel> snapshot) {
-    if (snapshot.hasData()) {
-      _exampleEntity
-        ..lastLogin =
-            DateTime.tryParse(snapshot.data.lastLogin) ?? DateTime.now()
-        ..loginCount = snapshot.data.loginCount;
-    }
-
-    if (snapshot.hasError()) {
-      //_exampleEntity = ExampleEntityWithDataError();
-
-      _exampleEntity.error = snapshot.error;
-    }
+    await ExampleLocator()
+        .repository
+        .runServiceAdapter(scope, ExampleServiceAdapter());
   }
 
-  ExampleViewModel get exampleViewModel {
-    //  if (_exampleEntity  is ExampleEntityWithDataError)
+  void _notifySubscribers(entity) {
+    _viewModelCallBack(buildViewModel(entity));
+  }
 
-    if (_exampleEntity.hasError()) {
-      return ExampleViewModel(
-          lastLogin: DateTime.now(),
-          loginCount: 0,
-          error: _exampleEntity.error);
-    } else {
-      return ExampleViewModel(
-          lastLogin: _exampleEntity.lastLogin,
-          loginCount: _exampleEntity.loginCount);
-    }
+  ExampleViewModel buildViewModel(ExampleEntity entity) {
+    return ExampleViewModel(
+      lastLogin: entity.lastLogin,
+      loginCount: entity.loginCount,
+    );
   }
 }
-
-class EntitySnapshot<D> {
-  final D _data;
-  final PublishedErrorType _error;
-
-  EntitySnapshot({D data, PublishedErrorType error})
-      : _data = data,
-        _error = error {
-    if ((this._data == null && this._error == null) ||
-        (this._data != null && this._error != null)) {
-      throw Error();
-    }
-  }
-
-  D get data {
-    return _data;
-  }
-
-  PublishedErrorType get error {
-    return _error;
-  }
-
-  bool hasData() {
-    return _data != null;
-  }
-
-  bool hasError() {
-    return _error != null;
-  }
-}
-
-class ExampleEntityWithDataError extends ExampleEntity implements DataError {
-  @override
-  StackTrace get stackTrace {
-    return null;
-  }
-}
-
-class ExampleEntityWithNetworkError extends ExampleEntity
-    implements NetworkError {
-  @override
-  StackTrace get stackTrace {
-    return null;
-  }
-}
-
-class DataError extends Error {}
-
-class NetworkError extends Error {}

@@ -1,23 +1,22 @@
 import 'package:clean_framework/clean_framework.dart';
 
 class ExampleEntity extends Entity {
-  DateTime _lastLogin = DateTime.now();
+  final DateTime lastLogin;
+  final int loginCount;
 
-  DateTime get lastLogin {
-    return assertErrorState(_lastLogin);
-  }
+  ExampleEntity(
+      {List<EntityError> errors, DateTime lastLogin, this.loginCount = 0})
+      : lastLogin = lastLogin ?? DateTime.now(),
+        super(errors: errors);
 
-  set lastLogin(DateTime value) {
-    _lastLogin = setData(value);
-  }
+  @override
+  List<Object> get props => [errors, lastLogin, loginCount];
 
-  int _loginCount = 0;
-
-  int get loginCount {
-    return assertErrorState(_loginCount);
-  }
-
-  set loginCount(int value) {
-    _loginCount = setData(value);
+  @override
+  merge({errors, DateTime lastLogin, int loginCount}) {
+    return ExampleEntity(
+        errors: errors ?? this.errors,
+        lastLogin: lastLogin ?? this.lastLogin,
+        loginCount: loginCount ?? this.loginCount);
   }
 }
