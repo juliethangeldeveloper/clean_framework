@@ -1,3 +1,9 @@
+## [0.1.3] Bloc Provider Bug Fix (2020-07-15)
+
+## [0.1.2] Use Case and Entity (2020-07-03)
+
+* Adding two new components to simplify the bloc code. A bloc is going to be used just as the bridge between UI components and use cases. A bloc will have multiple use cases that interact with one or more entities, each use case reflects one scenario and will be holding all the business logic. Entities will preserve the state of the business data (it is a direct replacement for the BusinessModel, which will be Deprecated on the next version)
+
 ## [0.1.1] Json Service POST fix (2020-07-03)
 
 * A JsonService was not sending correctly the JSON body as a request parameter to RestAPI, so it was fixed.
