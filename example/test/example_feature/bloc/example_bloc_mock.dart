@@ -12,4 +12,7 @@ class ExampleBlocMock extends Fake implements ExampleBloc {
           lastLogin: DateTime.parse('2020-01-01'), loginCount: 5));
     });
   }
+
+  @override
+  void dispose() {}
 }

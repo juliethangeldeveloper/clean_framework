@@ -43,16 +43,10 @@ class _BlocProviderState<B extends Bloc> extends State<BlocProvider<B>> {
 
   @override
   Widget build(BuildContext context) {
-    return Provider<B>.value(
-      value: _bloc,
+    return Provider<B>(
+      create: (_) => _bloc,
       child: widget.child,
       dispose: (_, __) => _bloc.dispose(),
     );
-  }
-
-  @override
-  void dispose() {
-    _bloc?.dispose();
-    super.dispose();
   }
 }

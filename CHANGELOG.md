@@ -1,3 +1,5 @@
+## [0.1.5] Bug fix on BlocProvider (2020-07-23)
+
 ## [0.1.4] Repository (2020-07-22)
 
 * Added the Repository class, which is used as the bridge between services and the use cases.
