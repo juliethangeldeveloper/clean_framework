@@ -1,3 +1,8 @@
+## [0.1.6] Bug fix on JsonService parameters (2020-07-23)
+
+* Some issues were found when passing multiple path parameters to the JsonRequest, so some changes had to be done on the service itself.
+* Added a skip to a failing test that should be fixed in the next release.
+
 ## [0.1.5] Bug fix on BlocProvider (2020-07-23)
 
 ## [0.1.4] Repository (2020-07-22)
