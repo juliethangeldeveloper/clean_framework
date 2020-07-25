@@ -41,20 +41,38 @@ void main() {
     expect(handler.model.optionalField, 'default');
   });
 
-  test('JsonService GET success with request varible', () async {
+  test('JsonService GET success with request variable', () async {
     final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.success,
-      content: '{"field": 123}',
+      content: '''
+{
+  "field": 123,
+  "param1": "foo",
+  "param2": "bar"
+}
+''',
     );
     final handler = TestJsonServiceResponseHandler();
-    final service =
-        TestJsonService(handler, RestMethod.get, 'test/{id}', restApiMock);
+    final service = TestJsonService(
+      handler,
+      RestMethod.get,
+      'test/{id}?p1={param1}&p2={param2}',
+      restApiMock,
+    );
 
-    final requestModel = TestJsonRequestModel(id: '123');
+    final requestModel = TestJsonRequestModel(
+      id: '123',
+      param1: 'foo',
+      param2: 'bar',
+    );
 
     await service.request(requestModel: requestModel);
     expect(handler.errorType, isNull);
     expect(handler.model, isNotNull);
+    expect(
+      service.resolvedPath,
+      'test/${requestModel.id}?p1=${requestModel.param1}&p2=${requestModel.param2}',
+    );
     expect(handler.model.field, 123);
     expect(handler.model.optionalField, 'default');
   });
@@ -167,10 +185,17 @@ void main() {
   test('JsonService POST success', () async {
     final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.success,
-      content: '{"field": 123}',
+      content: '''
+{
+  "field": 123,
+  "param1": "foo",
+  "param2": "bar"
+}
+''',
     );
 
-    final requestModel = TestJsonRequestModel(id: '123');
+    final requestModel =
+        TestJsonRequestModel(id: '123', param1: 'foo', param2: 'bar');
 
     final handler = TestJsonServiceResponseHandler();
     final service =
@@ -197,14 +222,21 @@ class TestJsonService extends JsonService {
 
 class TestJsonRequestModel implements JsonRequestModel {
   final String id;
-  TestJsonRequestModel({this.id}) : assert(id != null);
+  final String param1;
+  final String param2;
+
+  TestJsonRequestModel({
+    this.id,
+    this.param1,
+    this.param2,
+  }) : assert(id != null);
 
   @override
-  Map<String, dynamic> toJson() {
-    final map = <String, dynamic>{};
-    map['id'] = id;
-    return map;
-  }
+  Map<String, dynamic> toJson() => {
+        'id': id,
+        'param1': param1,
+        'param2': param2,
+      };
 }
 
 class NullableTestJsonRequestModel extends TestJsonRequestModel {
