@@ -1,6 +1,6 @@
 name: clean_framework
 description: Clean Architecture components library, inspired on the guidelines created by Uncle Bob.
-version: 0.1.5
+version: 0.1.6
 homepage: http://acme-software.com
 
 environment:
@@ -17,6 +17,8 @@ dependencies:
   either_option: ^1.0.6
 
   http: ^0.12.0+2
+
+  meta: ^1.2.2
 
 dev_dependencies:
   flutter_test:
