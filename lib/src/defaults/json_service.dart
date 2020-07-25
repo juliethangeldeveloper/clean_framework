@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:clean_framework/clean_framework.dart';
+import 'package:meta/meta.dart';
 
 abstract class JsonResponseModel extends ServiceResponseModel {
   JsonResponseModel();
@@ -17,11 +18,14 @@ abstract class JsonService<
     S extends JsonResponseModel,
     H extends JsonServiceResponseHandler<S>> implements Service<R, S> {
   RestApi _restApi;
-  String _path;
   RestMethod _method;
   H _handler;
+  String _resolvedPath;
 
   final String path;
+
+  @visibleForTesting
+  String get resolvedPath => _resolvedPath;
 
   JsonService({H handler, RestMethod method, this.path, RestApi restApi})
       : assert(handler != null),
@@ -29,7 +33,6 @@ abstract class JsonService<
         assert(path != null && path.isNotEmpty),
         assert(restApi != null),
         _handler = handler,
-        _path = path,
         _method = method,
         _restApi = restApi;
 
@@ -50,24 +53,49 @@ abstract class JsonService<
       }
     }
 
-    final variablesInPath = _getVariablesFromPath();
-    if (variablesInPath.length > 0) {
-      if (requestModel == null) {
-        // If a service has a variable in the path, request data is required
-        _handler.onInvalidRequest(null);
-        return;
-      }
-      requestJson =
-          _filterRequestDataAndUpdatePath(variablesInPath, requestJson);
-      if (_getVariablesFromPath(check: true).isNotEmpty) {
-        // Some variables where not substituted by request fields
-        _handler.onInvalidRequest(requestJson);
-        return;
-      }
+    if (RegExp(r'{(\w+)}').hasMatch(path) && requestModel == null) {
+      // If a service has a variable in the path, request data is required
+      _handler.onInvalidRequest(null);
+      return;
     }
 
+    final pathUri = Uri.parse(path);
+
+    final injectedQueryParams = pathUri.queryParameters?.map(
+      (k, v) => MapEntry(
+        k,
+        _isVariable(v) ? requestJson[_removeWrapper(v)]?.toString() : v,
+      ),
+    );
+    if (injectedQueryParams.containsValue(null)) {
+      // Some query parameter variables where not substituted by request fields
+      _handler.onInvalidRequest(requestJson);
+      return;
+    }
+
+    final injectedPathSegments = pathUri.pathSegments
+        .map(
+          (segment) => _isVariable(segment)
+              ? requestJson[_removeWrapper(segment)]?.toString()
+              : segment,
+        )
+        .toList();
+    if (injectedPathSegments.contains(null)) {
+      // Some path segment variables where not substituted by request fields
+      _handler.onInvalidRequest(requestJson);
+      return;
+    }
+
+    _resolvedPath = Uri(
+      pathSegments: injectedPathSegments,
+      queryParameters: injectedQueryParams,
+    ).toString();
+
     final response = await _restApi.request(
-        method: _method, path: _path, requestBody: requestJson);
+      method: _method,
+      path: _resolvedPath,
+      requestBody: requestJson,
+    );
 
     if (response.type == RestResponseType.timeOut) {
       _handler.onNoConnectivity();
@@ -101,29 +129,11 @@ abstract class JsonService<
     _handler.onSuccess(model);
   }
 
-  List<String> _getVariablesFromPath({bool check = false}) {
-    RegExp exp = RegExp(r'{(\w+)}');
-    Iterable<RegExpMatch> matches = exp.allMatches(check ? _path : path);
-    final foundVariables =
-        matches.map((m) => m.group(1)).toList(growable: false);
-    return foundVariables;
-  }
+  /// Checks whether the [value] is path variable or not.
+  bool _isVariable(String value) => RegExp(r'^{(\w+)}$').hasMatch(value);
 
-  Map<String, dynamic> _filterRequestDataAndUpdatePath(
-    List<String> variables,
-    Map<String, dynamic> requestData,
-  ) {
-    Map<String, dynamic> filteredRequestData = Map.from(requestData);
-    variables.forEach((variable) {
-      if (requestData.containsKey(variable)) {
-        _path =
-            path.replaceAll('{$variable}', requestData[variable].toString());
-        filteredRequestData.remove(variable);
-      }
-    });
-
-    return filteredRequestData;
-  }
+  /// Removes the bracket wrapper of [value]. i.e. {something} -> something
+  String _removeWrapper(String value) => value.substring(1, value.length - 1);
 
   bool isRequestModelJsonValid(Map<String, dynamic> json) {
     try {
