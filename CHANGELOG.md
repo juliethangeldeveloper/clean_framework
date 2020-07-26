@@ -1,3 +1,5 @@
+## [0.1.6+1] Minor bug fix on JsonService parameters (2020-07-26)
+
 ## [0.1.6] Bug fix on JsonService parameters (2020-07-23)
 
 * Some issues were found when passing multiple path parameters to the JsonRequest, so some changes had to be done on the service itself.

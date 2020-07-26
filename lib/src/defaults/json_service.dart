@@ -88,7 +88,8 @@ abstract class JsonService<
 
     _resolvedPath = Uri(
       pathSegments: injectedPathSegments,
-      queryParameters: injectedQueryParams,
+      queryParameters:
+          (injectedQueryParams?.isEmpty ?? true) ? null : injectedQueryParams,
     ).toString();
 
     final response = await _restApi.request(
