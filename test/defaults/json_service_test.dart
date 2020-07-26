@@ -56,7 +56,7 @@ void main() {
     final service = TestJsonService(
       handler,
       RestMethod.get,
-      'test/{id}?p1={param1}&p2={param2}',
+      'test/pre-{id}.json?p1={param1}&p2={param2}',
       restApiMock,
     );
 
@@ -71,7 +71,7 @@ void main() {
     expect(handler.model, isNotNull);
     expect(
       service.resolvedPath,
-      'test/${requestModel.id}?p1=${requestModel.param1}&p2=${requestModel.param2}',
+      'test/pre-${requestModel.id}.json?p1=${requestModel.param1}&p2=${requestModel.param2}',
     );
     expect(handler.model.field, 123);
     expect(handler.model.optionalField, 'default');

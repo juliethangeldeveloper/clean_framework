@@ -73,21 +73,23 @@ abstract class JsonService<
       return;
     }
 
-    final injectedPathSegments = pathUri.pathSegments
-        .map(
-          (segment) => _isVariable(segment)
-              ? requestJson[_removeWrapper(segment)]?.toString()
-              : segment,
-        )
-        .toList();
-    if (injectedPathSegments.contains(null)) {
+    var _pathSubstitutionSuccess = true;
+    final injectedPath = pathUri.path.replaceAllMapped(
+      RegExp(r'%7B(\w+)%7D'),
+      (match) {
+        final value = requestJson[match.group(1)];
+        if (value == null) _pathSubstitutionSuccess = false;
+        return value?.toString();
+      },
+    );
+    if (!_pathSubstitutionSuccess) {
       // Some path segment variables where not substituted by request fields
       _handler.onInvalidRequest(requestJson);
       return;
     }
 
     _resolvedPath = Uri(
-      pathSegments: injectedPathSegments,
+      path: injectedPath,
       queryParameters:
           (injectedQueryParams?.isEmpty ?? true) ? null : injectedQueryParams,
     ).toString();
