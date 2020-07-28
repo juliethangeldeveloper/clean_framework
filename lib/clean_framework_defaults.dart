@@ -1,3 +1,4 @@
+/// clean_framework_defaults
 library clean_framework_defaults;
 
 export 'package:clean_framework/src/defaults/always_online_connectivity.dart';
