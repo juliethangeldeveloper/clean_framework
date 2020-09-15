@@ -1,3 +1,10 @@
+# Changelog
+
+## [0.2.0] Minor Release: Documentation (2020-09-15)
+
+* First draft of markdown documentation to help new users understand the existing components.
+* Added a minor improvement on the Service Adapter, where the error state is being cleared after a successful response.
+
 ## [0.1.6+1] Minor bug fix on JsonService parameters (2020-07-26)
 
 ## [0.1.6] Bug fix on JsonService parameters (2020-07-23)

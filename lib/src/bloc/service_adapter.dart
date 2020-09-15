@@ -16,7 +16,10 @@ abstract class ServiceAdapter<E extends Entity, R extends JsonRequestModel,
         await _service.request(requestModel: createRequest(initialEntity));
     return eitherResponse.fold(
         (error) => createEntityWithError(initialEntity, error),
-        (responseModel) => createEntity(initialEntity, responseModel));
+        (responseModel) {
+          final errorClearedEntity = initialEntity.merge(errors: <EntityError>[]);
+          return createEntity(errorClearedEntity, responseModel);
+        });
   }
 
   E createEntity(E initialEntity, M responseModel);
