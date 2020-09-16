@@ -4,7 +4,7 @@ Clean Architecture components library, inspired on the guidelines created by Unc
 
 ## Learning Resources
 
-1. [Components Ecosystem] (/docs/components_ecosystem.md), to understand the basic usage
+1. [Components Ecosystem](/doc/components_ecosystem.md), to understand the basic usage
 of each class that is part of the framework.
-2. [Mockoon Installation] (/docs/mockoon.md), since the tests in the example folder require
+2. [Mockoon Installation](/doc/mockoon.md), since the tests in the example folder require
 an instance of Mockoon running.
