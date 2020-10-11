@@ -32,3 +32,22 @@
 2. Click the green play button next to the environment name to start the environment
 
 Putting a route into your browser should show the JSON response. For example, if your port was 3001 and your route was /account, you could go to `localhost:3001/account`.
+
+## Exporting an environment
+1. Right click on the environment you wish to export
+2. Click on `Copy to clipboard (JSON)`
+3. Paste the JSON in the repo's file for the environment
+
+## Importing an environment
+
+### From clipboard
+1. Copy the environment JSON object
+2. In Mockoon, click on `Import/export` in the menu bar
+3. Go to `Mockoon's format`
+4. Click on `Import from clipboard`
+
+### From file
+1. In Mockoon, click on `Import/export` in the menu bar
+2. Go to `Mockoon's format`
+3. Click on `Import from a file (JSON)`
+4. Select and open the JSON file containing the environment JSON
