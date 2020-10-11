@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.2.1] Minor Release: Minimum iOS version upgrade (2020-10-11)
+
 ## [0.2.0] Minor Release: Documentation (2020-09-15)
 
 * First draft of markdown documentation to help new users understand the existing components.
