@@ -23,13 +23,14 @@ class PaymentUseCase extends UseCase {
         _viewModelCallBack = viewModelCallBack;
 
   void create() async {
+
     _scope = ExampleLocator().repository.containsScope<PaymentEntity>();
-    if (_scope == null) {
+    if(_scope == null) {
       final newPaymentEntity = PaymentEntity();
       _scope = ExampleLocator()
           .repository
           .create<PaymentEntity>(newPaymentEntity, _notifySubscribers);
-    } else {
+    }else{
       _scope.subscription = _notifySubscribers;
     }
     final entity = ExampleLocator().repository.get<PaymentEntity>(_scope);
@@ -71,6 +72,7 @@ class PaymentUseCase extends UseCase {
           .repository
           .runServiceAdapter(_scope, PaymentServiceAdapter());
     }
+
   }
 
   void _notifySubscribers(entity) {

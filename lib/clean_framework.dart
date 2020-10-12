@@ -1,4 +1,3 @@
-/// clean_framework
 library clean_framework;
 
 export 'package:clean_framework/src/bloc/bloc.dart';

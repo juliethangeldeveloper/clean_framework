@@ -1,5 +1,9 @@
 # Changelog
 
+## [0.2.2] Updates on Repository (2020-11-12)
+
+* Repository adds a parameter to delete the existing entity if needed, when create is called.
+
 ## [0.2.1] Minor Release: Minimum iOS version upgrade (2020-10-11)
 
 ## [0.2.0] Minor Release: Documentation (2020-09-15)

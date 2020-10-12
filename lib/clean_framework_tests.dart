@@ -1,4 +1,3 @@
-/// clean_framework_tests
 library clean_framework_tests;
 
 export 'package:clean_framework/src/tests/json_service_response_handler_mock.dart';
