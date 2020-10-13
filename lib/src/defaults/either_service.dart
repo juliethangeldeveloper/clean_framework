@@ -42,26 +42,6 @@ abstract class EitherService<R extends JsonRequestModel,
       }
     }
 
-    final variablesInPath = _getVariablesFromPath();
-    if (variablesInPath.length > 0) {
-      if (requestModel == null) {
-        // If a service has a variable in the path, request data is required
-        Locator()
-            .logger
-            .debug('JsonService response missing request parameters');
-        return Left(GeneralServiceError());
-      }
-      requestJson =
-          _filterRequestDataAndUpdatePath(variablesInPath, requestJson);
-      if (_getVariablesFromPath(check: true).isNotEmpty) {
-        // Some variables where not substituted by request fields
-        Locator()
-            .logger
-            .debug('JsonService response invalid request parameters');
-        return Left(GeneralServiceError());
-      }
-    }
-
     final response = await _restApi.request(
         method: _method, path: _path, requestBody: requestJson);
 
@@ -93,30 +73,6 @@ abstract class EitherService<R extends JsonRequestModel,
     }
 
     return Right(model);
-  }
-
-  List<String> _getVariablesFromPath({bool check = false}) {
-    RegExp exp = RegExp(r'{(\w+)}');
-    Iterable<RegExpMatch> matches = exp.allMatches(check ? _path : path);
-    final foundVariables =
-        matches.map((m) => m.group(1)).toList(growable: false);
-    return foundVariables;
-  }
-
-  Map<String, dynamic> _filterRequestDataAndUpdatePath(
-    List<String> variables,
-    Map<String, dynamic> requestData,
-  ) {
-    Map<String, dynamic> filteredRequestData = Map.from(requestData);
-    variables.forEach((variable) {
-      if (requestData.containsKey(variable)) {
-        _path =
-            path.replaceAll('{$variable}', requestData[variable].toString());
-        filteredRequestData.remove(variable);
-      }
-    });
-
-    return filteredRequestData;
   }
 
   bool isRequestModelJsonValid(Map<String, dynamic> json) {

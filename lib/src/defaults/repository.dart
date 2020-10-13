@@ -11,14 +11,16 @@ class Repository {
   Map<RepositoryScope, Entity> scopes = {};
 
   RepositoryScope create<E extends Entity>(
-      E entity, Function(dynamic) subscription) {
+      E entity, Function(dynamic) subscription, {bool deleteIfExists = false}) {
     final existingScope = scopes.keys.firstWhere(
         (element) => scopes[element].runtimeType == entity.runtimeType,
         orElse: () => null);
 
-    if (existingScope != null) {
+    if (existingScope != null && !deleteIfExists) {
       existingScope.subscription = subscription;
       return existingScope;
+    }else if(existingScope != null && deleteIfExists){
+      scopes.remove(existingScope);
     }
 
     RepositoryScope scope = RepositoryScope(subscription);

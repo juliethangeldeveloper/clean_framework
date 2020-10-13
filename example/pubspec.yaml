@@ -9,10 +9,9 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
-  either_option: ^1.0.6
   clean_framework:
     path: ../
-    
+
   intl: ^0.16.1
 
 dev_dependencies:

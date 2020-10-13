@@ -6,7 +6,7 @@ class PaymentEntity extends Entity {
   final double amount;
 
   PaymentEntity(
-      {List<EntityError> errors = const [],
+      {List<EntityError> errors  = const [],
       String fromAccount,
       String toAccount,
       this.amount = 0.0})
