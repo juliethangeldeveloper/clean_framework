@@ -1,6 +1,11 @@
 # Changelog
 
-## [0.2.2] Updates on Repository (2020-11-12)
+## [0.2.3] ViewModel is Equatable, Pipe has canSendDuplicateData parameter (2020-10-15)
+
+* After some analysis, we found out view models are always equatable in our implementations, so it made sense to add it to the abstract class.
+* In some specific situations, it is desirable to send the same data over a pipe, so a parameter was added to allow that behavior.
+
+## [0.2.2] Updates on Repository (2020-10-12)
 
 * Repository adds a parameter to delete the existing entity if needed, when create is called.
 

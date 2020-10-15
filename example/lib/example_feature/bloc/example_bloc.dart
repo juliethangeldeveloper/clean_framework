@@ -18,6 +18,6 @@ class ExampleBloc extends Bloc {
   ExampleBloc({ExampleService exampleService}) {
     _useCase =
         ExampleUseCase((viewModel) => exampleViewModelPipe.send(viewModel));
-    exampleViewModelPipe.onListen(() => _useCase.execute());
+    exampleViewModelPipe.whenListenedDo(() => _useCase.execute());
   }
 }

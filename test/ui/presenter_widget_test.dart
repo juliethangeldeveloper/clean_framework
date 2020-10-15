@@ -23,24 +23,24 @@ void main() {
 
   testWidgets(
       'Presenter and Screen show default data if service is unreachable',
-      (tester) async {
-    final testWidget = MaterialApp(
-      home: BlocProvider<TestBlocWithService>(
-        create: (_) => TestBlocWithService(),
-        child: TestResponseHandlerWidget<TestBlocWithService>(
-            onError: expectAsync1((errorType) {
-              expect(errorType, PublishedErrorType.general);
-            }),
-            child: TestPresenter<TestBlocWithService>()),
-      ),
-    );
+          (tester) async {
+        final testWidget = MaterialApp(
+          home: BlocProvider<TestBlocWithService>(
+            create: (_) => TestBlocWithService(),
+            child: TestResponseHandlerWidget<TestBlocWithService>(
+                onError: expectAsync1((errorType) {
+                  expect(errorType, PublishedErrorType.general);
+                }),
+                child: TestPresenter<TestBlocWithService>()),
+          ),
+        );
 
-    await tester.pumpWidget(testWidget);
-    await tester.pump(Duration(milliseconds: 200));
+        await tester.pumpWidget(testWidget);
+        await tester.pump(Duration(milliseconds: 200));
 
-    expect(find.byType(TestScreen), findsOneWidget);
-    expect(find.text('foo'), findsNothing);
-  });
+        expect(find.byType(TestScreen), findsOneWidget);
+        expect(find.text('foo'), findsNothing);
+      });
 }
 
 class TestPresenter<B extends TestBloc>
@@ -72,6 +72,9 @@ class TestViewModel extends ViewModel {
   final greeting;
 
   TestViewModel({this.greeting = 'foo'});
+
+  @override
+  List<Object> get props => [greeting];
 }
 
 class TestBloc extends ErrorPublisherBloc {
@@ -83,7 +86,7 @@ class TestBloc extends ErrorPublisherBloc {
   }
 
   TestBloc() {
-    viewModelPipe.onListen(() {
+    viewModelPipe.whenListenedDo(() {
       viewModelPipe.send(TestViewModel());
     });
   }
@@ -110,7 +113,7 @@ class TestBlocWithService extends TestBloc {
     );
     _service = TestService(handler);
 
-    viewModelPipe.onListen(() async {
+    viewModelPipe.whenListenedDo(() async {
       await _service.request();
       viewModelPipe.send(_viewModel);
     });
@@ -121,8 +124,8 @@ class TestBlocWithService extends TestBloc {
   }
 
   TestViewModel get _viewModel => TestViewModel(
-        greeting: _businessModel.greeting,
-      );
+    greeting: _businessModel.greeting,
+  );
 }
 
 class TestBusinessModel extends BusinessModel {
@@ -132,11 +135,11 @@ class TestBusinessModel extends BusinessModel {
 class TestService extends JsonService {
   TestService(handler)
       : super(
-          handler: handler,
-          method: RestMethod.get,
-          path: 'fake',
-          restApi: SimpleRestApi(),
-        );
+    handler: handler,
+    method: RestMethod.get,
+    path: 'fake',
+    restApi: SimpleRestApi(),
+  );
 
   @override
   TestResponseModel parseResponse(Map<String, dynamic> jsonResponse) {

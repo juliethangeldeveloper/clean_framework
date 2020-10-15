@@ -24,7 +24,7 @@ class PaymentBloc extends Bloc {
   PaymentBloc({ExampleService exampleService}) {
     _paymentUseCase =
         PaymentUseCase((viewModel) => paymentViewModelPipe.send(viewModel));
-    paymentViewModelPipe.onListen(() => _paymentUseCase.create());
+    paymentViewModelPipe.whenListenedDo(() => _paymentUseCase.create());
 
     amountPipe.receive.listen(amountInputHandler);
     fromAccountPipe.receive.listen(fromAccountInputHandler);
