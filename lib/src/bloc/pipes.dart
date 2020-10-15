@@ -3,29 +3,32 @@ import 'dart:ui';
 
 class Pipe<T> {
   StreamController<T> _controller;
-  bool hasListeners = false;
+  bool _hasListeners = false;
+  final bool canSendDuplicateData;
   T initialData;
   T _lastData;
 
   Stream<T> get receive => _controller.stream;
+  bool get hasListeners => _hasListeners;
 
-  Pipe({this.initialData}) {
-    _controller = StreamController<T>.broadcast();
+  Pipe._({StreamController controller, this.initialData, this.canSendDuplicateData = false}){
+    _controller = controller ?? StreamController<T>.broadcast();
     _controller.onListen = () {
-      hasListeners = true;
+      _hasListeners = true;
     };
   }
 
-  Pipe.single({this.initialData}) {
-    _controller = StreamController<T>();
-    _controller.onListen = () {
-      hasListeners = true;
-    };
+  factory Pipe({T initialData, bool canSendDuplicateData = false}) {
+    return Pipe._(initialData: initialData, canSendDuplicateData: canSendDuplicateData);
   }
 
-  void onListen(VoidCallback onListen) {
+  factory Pipe.single({T initialData, bool canSendDuplicateData = false}) {
+    return Pipe._(controller: StreamController<T>(), initialData: initialData, canSendDuplicateData: canSendDuplicateData);
+  }
+
+  void whenListenedDo(VoidCallback onListen) {
     _controller.onListen = () {
-      hasListeners = true;
+      _hasListeners = true;
       if (onListen != null) onListen();
     };
   }
@@ -35,7 +38,7 @@ class Pipe<T> {
   }
 
   bool send(T data) {
-    if (_controller.isClosed || _lastData == data) return false;
+    if (_controller.isClosed || (canSendDuplicateData == false && _lastData == data)) return false;
     _lastData = data;
     _controller.sink.add(data);
     return true;
@@ -49,8 +52,8 @@ class Pipe<T> {
 }
 
 class EventPipe extends Pipe<void> {
-  EventPipe({VoidCallback onListen}) : super(initialData: null);
-  EventPipe.single({VoidCallback onListen}) : super.single(initialData: null);
+  EventPipe({VoidCallback onListen}) : super._(initialData: null, canSendDuplicateData: true);
+  //EventPipe.single({VoidCallback onListen}) : super.single(initialData: null);
 
   @override
   get receive => null;
