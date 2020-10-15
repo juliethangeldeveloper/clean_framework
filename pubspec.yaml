@@ -9,6 +9,8 @@ environment:
 dependencies:
   flutter:
     sdk: flutter
+  flutter_test:
+    sdk: flutter
 
   equatable: ^1.2.3
 
@@ -21,7 +23,5 @@ dependencies:
   meta: ^1.1.8
 
 dev_dependencies:
-  flutter_test:
-    sdk: flutter
   test: ^1.14.4
   mockito: ^4.1.1
