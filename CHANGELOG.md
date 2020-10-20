@@ -1,5 +1,7 @@
 # Changelog
 
+## [0.2.4] Added Introduction PDF and updated README (2020-10-20)
+
 ## [0.2.3] ViewModel is Equatable, Pipe has canSendDuplicateData parameter (2020-10-15)
 
 * After some analysis, we found out view models are always equatable in our implementations, so it made sense to add it to the abstract class.
