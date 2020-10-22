@@ -5,6 +5,9 @@ import 'package:flutter/foundation.dart';
 class Entity extends Equatable {
   final List<EntityError> errors;
 
+  @override
+  bool get stringify => true;
+
   Entity({this.errors = const []});
   bool hasErrors() => errors.isNotEmpty;
   bool hasError(EntityError error) => errors.indexOf(error) > 0;

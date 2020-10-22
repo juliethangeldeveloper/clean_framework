@@ -23,24 +23,24 @@ void main() {
 
   testWidgets(
       'Presenter and Screen show default data if service is unreachable',
-          (tester) async {
-        final testWidget = MaterialApp(
-          home: BlocProvider<TestBlocWithService>(
-            create: (_) => TestBlocWithService(),
-            child: TestResponseHandlerWidget<TestBlocWithService>(
-                onError: expectAsync1((errorType) {
-                  expect(errorType, PublishedErrorType.general);
-                }),
-                child: TestPresenter<TestBlocWithService>()),
-          ),
-        );
+      (tester) async {
+    final testWidget = MaterialApp(
+      home: BlocProvider<TestBlocWithService>(
+        create: (_) => TestBlocWithService(),
+        child: TestResponseHandlerWidget<TestBlocWithService>(
+            onError: expectAsync1((errorType) {
+              expect(errorType, PublishedErrorType.general);
+            }),
+            child: TestPresenter<TestBlocWithService>()),
+      ),
+    );
 
-        await tester.pumpWidget(testWidget);
-        await tester.pump(Duration(milliseconds: 200));
+    await tester.pumpWidget(testWidget);
+    await tester.pump(Duration(milliseconds: 200));
 
-        expect(find.byType(TestScreen), findsOneWidget);
-        expect(find.text('foo'), findsNothing);
-      });
+    expect(find.byType(TestScreen), findsOneWidget);
+    expect(find.text('foo'), findsNothing);
+  });
 }
 
 class TestPresenter<B extends TestBloc>
@@ -124,8 +124,8 @@ class TestBlocWithService extends TestBloc {
   }
 
   TestViewModel get _viewModel => TestViewModel(
-    greeting: _businessModel.greeting,
-  );
+        greeting: _businessModel.greeting,
+      );
 }
 
 class TestBusinessModel extends BusinessModel {
@@ -135,11 +135,11 @@ class TestBusinessModel extends BusinessModel {
 class TestService extends JsonService {
   TestService(handler)
       : super(
-    handler: handler,
-    method: RestMethod.get,
-    path: 'fake',
-    restApi: SimpleRestApi(),
-  );
+          handler: handler,
+          method: RestMethod.get,
+          path: 'fake',
+          restApi: SimpleRestApi(),
+        );
 
   @override
   TestResponseModel parseResponse(Map<String, dynamic> jsonResponse) {
@@ -149,6 +149,9 @@ class TestService extends JsonService {
 
 class TestResponseModel extends JsonResponseModel {
   final greeting;
+
+  @override
+  List<Object> get props => [greeting];
 
   TestResponseModel.fromJson(Map<String, dynamic> json)
       : greeting = json['greeting'] ?? '';

@@ -60,7 +60,7 @@ abstract class EitherService<R extends JsonRequestModel,
     try {
       final content = response?.content as String ?? '';
       final Map<String, dynamic> jsonResponse =
-          json.decode(content) ?? <String, dynamic>{};
+          (content.isEmpty) ? {} : json.decode(content) ?? <String, dynamic>{};
       model = parseResponse(jsonResponse);
     } on Error catch (e) {
       Locator().logger.debug('JsonService response parse error', e.toString());

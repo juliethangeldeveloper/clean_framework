@@ -2,5 +2,7 @@ import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 @immutable
-abstract class ViewModel extends Equatable{}
-
+abstract class ViewModel extends Equatable {
+  @override
+  bool get stringify => true;
+}
