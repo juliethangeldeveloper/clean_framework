@@ -20,8 +20,11 @@ class Entity extends Equatable {
   List<Object> get props => [errors];
 }
 
-class EntityError {
+class EntityError extends Equatable {
   const EntityError();
+
+  @override
+  List<Object> get props => [];
 }
 
 class GeneralError extends EntityError {}
