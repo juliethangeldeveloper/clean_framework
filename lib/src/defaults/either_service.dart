@@ -2,9 +2,12 @@ import 'dart:convert';
 
 import 'package:clean_framework/clean_framework.dart';
 import 'package:either_option/either_option.dart';
+import 'package:equatable/equatable.dart';
 import 'package:flutter/foundation.dart';
 
 import 'json_service.dart';
+
+export 'json_parse_helpers.dart';
 
 abstract class EitherService<R extends JsonRequestModel,
     S extends JsonResponseModel> implements Service<R, S> {
@@ -26,11 +29,11 @@ abstract class EitherService<R extends JsonRequestModel,
         _restApi = restApi;
 
   @override
-  Future<Either<ServiceError, S>> request({R requestModel}) async {
+  Future<Either<ServiceFailure, S>> request({R requestModel}) async {
     if (await Locator().connectivity.getConnectivityStatus() ==
         ConnectivityStatus.offline) {
       Locator().logger.debug('JsonService response no connectivity error');
-      return Left(NoConnectivityServiceError());
+      return Left(NoConnectivityServiceFailure());
     }
 
     Map<String, dynamic> requestJson;
@@ -38,7 +41,7 @@ abstract class EitherService<R extends JsonRequestModel,
       requestJson = requestModel.toJson();
       if (!isRequestModelJsonValid(requestJson)) {
         Locator().logger.debug('JsonService response invalid request error');
-        return Left(GeneralServiceError());
+        return Left(GeneralServiceFailure());
       }
     }
 
@@ -47,12 +50,7 @@ abstract class EitherService<R extends JsonRequestModel,
 
     if (response.type == RestResponseType.timeOut) {
       Locator().logger.debug('JsonService response no connectivity error');
-      return Left(NoConnectivityServiceError());
-    } else if (response.type != RestResponseType.success) {
-      ServiceError error = onError(response);
-      if (!(error is NoServiceError)) {
-        return Left(error);
-      }
+      return Left(NoConnectivityServiceFailure());
     }
 
     S model;
@@ -61,18 +59,23 @@ abstract class EitherService<R extends JsonRequestModel,
       final content = response?.content as String ?? '';
       final Map<String, dynamic> jsonResponse =
           (content.isEmpty) ? {} : json.decode(content) ?? <String, dynamic>{};
+
+      if (response.type != RestResponseType.success) {
+        return Left(onError(response.type, jsonResponse));
+      }
+
       model = parseResponse(jsonResponse);
-    } on Error catch (e) {
-      Locator().logger.debug('JsonService response parse error', e.toString());
-      return Left(GeneralServiceError());
+      return Right(model);
     } on Exception catch (e) {
+      // Errors should not be handled. The app should fail since it a developer
+      // mistake and should be fixed ASAP. Exceptions are not the fault of
+      // any developer, so we should log them to help us find quickly on
+      // production logs the problem.
       Locator()
           .logger
-          .debug('JsonService response parse exception', e.toString());
-      return Left(GeneralServiceError());
+          .error('JsonService response parse exception', e.toString());
     }
-
-    return Right(model);
+    return Left(GeneralServiceFailure());
   }
 
   bool isRequestModelJsonValid(Map<String, dynamic> json) {
@@ -101,15 +104,17 @@ abstract class EitherService<R extends JsonRequestModel,
 
   S parseResponse(Map<String, dynamic> jsonResponse);
 
-  ServiceError onError(RestResponse response) {
-    return NoServiceError();
+  ServiceFailure onError(
+      RestResponseType responseType, Map<String, dynamic> jsonResponse) {
+    return GeneralServiceFailure();
   }
 }
 
-abstract class ServiceError {}
+abstract class ServiceFailure extends Equatable {
+  @override
+  List<Object> get props => [];
+}
 
-class NoServiceError extends ServiceError {}
+class GeneralServiceFailure extends ServiceFailure {}
 
-class GeneralServiceError extends ServiceError {}
-
-class NoConnectivityServiceError extends ServiceError {}
+class NoConnectivityServiceFailure extends ServiceFailure {}

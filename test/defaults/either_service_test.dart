@@ -38,6 +38,21 @@ void main() {
           model, TestJsonResponseModel(field: 123, optionalField: 'default'));
     });
   });
+
+  test('EitherService GET custom failure', () async {
+    final restApiMock = RestApiMock<String>(
+      responseType: RestResponseType.conflict,
+      content: '{"error": "custom"}',
+    );
+    final service = TestServiceWithCustomResponseAndCustomError(
+        RestMethod.get, 'test', restApiMock);
+
+    final response = await service.request();
+    expect(response.isLeft, isTrue);
+    response.fold((error) {
+      expect(error, CustomServiceFailure());
+    }, (_) {});
+  });
 }
 
 class TestServiceWithEmptyResponse
@@ -61,6 +76,28 @@ class TestServiceWithCustomResponse
     return TestJsonResponseModel.fromJson(jsonResponse);
   }
 }
+
+class TestServiceWithCustomResponseAndCustomError
+    extends EitherService<JsonRequestModel, TestJsonResponseModel> {
+  TestServiceWithCustomResponseAndCustomError(
+      RestMethod method, String path, RestApi restApi)
+      : super(method: method, path: path, restApi: restApi);
+
+  @override
+  TestJsonResponseModel parseResponse(Map<String, dynamic> jsonResponse) {
+    return TestJsonResponseModel.fromJson(jsonResponse);
+  }
+
+  @override
+  ServiceFailure onError(
+      RestResponseType responseType, Map<String, dynamic> jsonResponse) {
+    if (responseType == RestResponseType.conflict)
+      return CustomServiceFailure();
+    return GeneralServiceFailure();
+  }
+}
+
+class CustomServiceFailure extends ServiceFailure {}
 
 class TestJsonResponseModel extends JsonResponseModel {
   final int field;

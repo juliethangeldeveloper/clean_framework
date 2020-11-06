@@ -14,17 +14,17 @@ abstract class ServiceAdapter<E extends Entity, R extends JsonRequestModel,
   Future<Entity> query(E initialEntity) async {
     final eitherResponse =
         await _service.request(requestModel: createRequest(initialEntity));
-    return eitherResponse.fold(
-        (error) => createEntityWithError(initialEntity, error),
-        (responseModel) {
-          final errorClearedEntity = initialEntity.merge(errors: <EntityError>[]);
-          return createEntity(errorClearedEntity, responseModel);
-        });
+    return eitherResponse
+        .fold((error) => createEntityWithError(initialEntity, error),
+            (responseModel) {
+      final errorClearedEntity = initialEntity.merge(errors: <EntityError>[]);
+      return createEntity(errorClearedEntity, responseModel);
+    });
   }
 
   E createEntity(E initialEntity, M responseModel);
-  E createEntityWithError(E initialEntity, ServiceError error) {
-    if (error is NoConnectivityServiceError)
+  E createEntityWithError(E initialEntity, ServiceFailure error) {
+    if (error is NoConnectivityServiceFailure)
       return initialEntity.merge(errors: [NoConnectivityError()]);
     return initialEntity.merge(errors: [GeneralError()]);
   }
