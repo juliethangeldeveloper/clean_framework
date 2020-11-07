@@ -36,7 +36,7 @@ abstract class EitherService<R extends JsonRequestModel,
       return Left(NoConnectivityServiceFailure());
     }
 
-    Map<String, dynamic> requestJson;
+    Map<String, dynamic> requestJson = const {};
     if (requestModel != null) {
       requestJson = requestModel.toJson();
       if (!isRequestModelJsonValid(requestJson)) {

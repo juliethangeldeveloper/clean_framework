@@ -5,7 +5,7 @@ class ExampleEntity extends Entity {
   final int loginCount;
 
   ExampleEntity(
-      {List<EntityError> errors, DateTime lastLogin, this.loginCount = 0})
+      {List<EntityFailure> errors, DateTime lastLogin, this.loginCount = 0})
       : lastLogin = lastLogin ?? DateTime.now(),
         super(errors: errors);
 

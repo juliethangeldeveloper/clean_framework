@@ -16,7 +16,12 @@ void main() {
     final service =
         TestServiceWithEmptyResponse(RestMethod.get, 'test', restApiMock);
 
-    final response = await service.request();
+    // Sending null in the request is just a test to demonstrate that it is
+    // supported, we had a bug where an exception happened if this was null,
+    // which was a problem with the implementation of the ResApi. In order
+    // to not be sensitive to errors like that, it is better to also check
+    // inside the request method if a null is sent.
+    final response = await service.request(requestModel: null);
     expect(response.isRight, isTrue);
     response.fold((_) {}, (model) {
       expect(model, isA<EmptyJsonResponseModel>());

@@ -17,7 +17,7 @@ abstract class ServiceAdapter<E extends Entity, R extends JsonRequestModel,
     return eitherResponse
         .fold((error) => createEntityWithError(initialEntity, error),
             (responseModel) {
-      final errorClearedEntity = initialEntity.merge(errors: <EntityError>[]);
+      final errorClearedEntity = initialEntity.merge(errors: <EntityFailure>[]);
       return createEntity(errorClearedEntity, responseModel);
     });
   }
@@ -25,8 +25,8 @@ abstract class ServiceAdapter<E extends Entity, R extends JsonRequestModel,
   E createEntity(E initialEntity, M responseModel);
   E createEntityWithError(E initialEntity, ServiceFailure error) {
     if (error is NoConnectivityServiceFailure)
-      return initialEntity.merge(errors: [NoConnectivityError()]);
-    return initialEntity.merge(errors: [GeneralError()]);
+      return initialEntity.merge(errors: [NoConnectivityEntityFailure()]);
+    return initialEntity.merge(errors: [GeneralEntityFailure()]);
   }
 
   /// override if needed
