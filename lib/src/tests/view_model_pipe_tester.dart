@@ -43,7 +43,7 @@ class ViewModelPipeTester<V extends ViewModel> {
       completer = Completer<ViewModelPipeTester>();
       await completer.future.timeout(const Duration(seconds: 3),
           onTimeout: () =>
-          throw NeverReceivedInitialViewModelPipeTesterError());
+              throw NeverReceivedInitialViewModelPipeTesterError());
     }
 
     if (_launch != null) {
@@ -51,14 +51,14 @@ class ViewModelPipeTester<V extends ViewModel> {
       _launch?.call();
       await completer.future.timeout(const Duration(seconds: 3),
           onTimeout: () =>
-          throw NeverReceivedUpdatedViewModelPipeTesterError());
+              throw NeverReceivedUpdatedViewModelPipeTesterError());
     }
 
     expect(item, receivedViewModel);
     return this;
   }
 
-  void dispose(){
+  void dispose() {
     _pipeSubscription.cancel();
     completer?.complete();
   }
@@ -88,5 +88,5 @@ class MissingListenedCallbackPipeTesterError
     extends NeverReceivedPipeTesterError {
   MissingListenedCallbackPipeTesterError()
       : super(
-      'ViewModelPipeTester can only be used with pipes that implement the method whenListenedDo.');
+            'ViewModelPipeTester can only be used with pipes that implement the method whenListenedDo.');
 }
