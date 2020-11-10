@@ -1,10 +1,19 @@
 import 'dart:convert';
 
 import 'package:clean_framework/clean_framework.dart';
+import 'package:equatable/equatable.dart';
 import 'package:meta/meta.dart';
 
-abstract class JsonResponseModel extends ServiceResponseModel {
+import 'json_parse_helpers.dart';
+export 'json_parse_helpers.dart';
+
+abstract class JsonResponseModel extends ServiceResponseModel
+    with EquatableMixin {
   JsonResponseModel();
+
+  @override
+  bool get stringify => true;
+
   // I have to find yet a way to force this constructor on implementation
   // JsonResponseModel.fromJson(Map<String, dynamic> json);
 }
@@ -28,10 +37,13 @@ abstract class JsonService<
   String get resolvedPath => _resolvedPath;
 
   JsonService({H handler, RestMethod method, this.path, RestApi restApi})
-      : assert(handler != null),
-        assert(method != null),
-        assert(path != null && path.isNotEmpty),
-        assert(restApi != null),
+      : assert(() {
+          return handler != null &&
+              method != null &&
+              path != null &&
+              path.isNotEmpty &&
+              restApi != null;
+        }()),
         _handler = handler,
         _method = method,
         _restApi = restApi;
@@ -115,7 +127,7 @@ abstract class JsonService<
     try {
       final content = response?.content as String ?? '';
       final Map<String, dynamic> jsonResponse =
-          json.decode(content) ?? <String, dynamic>{};
+          (content.isEmpty) ? {} : json.decode(content) ?? <String, dynamic>{};
       model = parseResponse(jsonResponse);
     } on Error catch (e) {
       Locator().logger.debug('JsonService response parse error', e.toString());
@@ -175,4 +187,9 @@ abstract class JsonServiceResponseHandler<S extends JsonResponseModel>
   void onInvalidRequest(Map<String, dynamic> requestJson);
   void onInvalidResponse(String response);
   void onError(RestResponseType responseType, String response);
+}
+
+class EmptyJsonResponseModel extends JsonResponseModel {
+  @override
+  List<Object> get props => [];
 }

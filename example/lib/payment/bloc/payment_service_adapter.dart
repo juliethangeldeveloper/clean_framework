@@ -11,7 +11,7 @@ class PaymentServiceAdapter extends ServiceAdapter<PaymentEntity,
   @override
   PaymentEntity createEntity(
       PaymentEntity initialEntity, PaymentServiceResponseModel responseModel) {
-    return initialEntity.merge(errors: <EntityError>[]);
+    return initialEntity.merge(errors: <EntityFailure>[]);
   }
 
   @override

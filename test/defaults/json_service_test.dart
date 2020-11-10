@@ -8,23 +8,6 @@ import '../test_config.dart';
 void main() {
   testConfig();
 
-  test('JsonService asserts', () {
-    expect(() => TestJsonService(null, null, null, null),
-        throwsA(isA<AssertionError>()));
-    expect(
-        () =>
-            TestJsonService(TestJsonServiceResponseHandler(), null, null, null),
-        throwsA(isA<AssertionError>()));
-    expect(
-        () => TestJsonService(
-            TestJsonServiceResponseHandler(), RestMethod.get, null, null),
-        throwsA(isA<AssertionError>()));
-    expect(
-        () => TestJsonService(
-            TestJsonServiceResponseHandler(), RestMethod.get, 'test', null),
-        throwsA(isA<AssertionError>()));
-  });
-
   test('JsonService GET success', () async {
     final restApiMock = RestApiMock<String>(
       responseType: RestResponseType.success,
@@ -75,6 +58,20 @@ void main() {
     );
     expect(handler.model.field, 123);
     expect(handler.model.optionalField, 'default');
+  });
+
+  test('JsonService GET with empty response', () async {
+    final restApiMock = RestApiMock<String>(
+      responseType: RestResponseType.success,
+      content: '',
+    );
+    final handler = TestJsonServiceResponseHandler();
+    final service =
+        TestJsonService(handler, RestMethod.get, 'test', restApiMock);
+
+    await service.request();
+    expect(handler.errorType, isNull);
+    expect(handler.model, isNotNull);
   });
 
   test('JsonService GET server error', () async {
@@ -220,7 +217,7 @@ class TestJsonService extends JsonService {
   }
 }
 
-class TestJsonRequestModel implements JsonRequestModel {
+class TestJsonRequestModel extends JsonRequestModel {
   final String id;
   final String param1;
   final String param2;
@@ -249,9 +246,12 @@ class NullableTestJsonRequestModel extends TestJsonRequestModel {
   }
 }
 
-class TestJsonResponseModel implements JsonResponseModel {
+class TestJsonResponseModel extends JsonResponseModel {
   final int field;
   final String optionalField;
+
+  @override
+  List<Object> get props => [field, optionalField];
 
   @override
   TestJsonResponseModel.fromJson(json)
